@@ -1,0 +1,6 @@
+Polygone.java:176: error: cannot find symbol
+            Point nextSommet = sommets[(iSommet + 1) % sommet.length];
+                                                       ^
+  symbol:   variable sommet
+  location: class Polygone
+1 error

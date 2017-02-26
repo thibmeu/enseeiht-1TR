@@ -1,0 +1,165 @@
+
+import java.awt.event.KeyEvent;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
+import java.util.ArrayList;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+	
+	/** Classe fenetre : l'interface graphique.
+	 * On y definit les menus et sous menus utilisables.
+	 * @author gdefranc
+	 */
+public class Fenetre  {
+		/** void main : on definit la JFrame et on appelle une fonction qui cree tout le contenu */
+	public static void main(final String args[]) {
+		//frame
+	   JFrame frame = new JFrame("Interface graphique");
+	   frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	   definitionContenu(frame);
+	   
+	 }
+	   /** Fonction qui definit le contenu de l'interface graphique (JMenuBar) et les parametres de la fenetre. Elle
+	    * appelle la fonciton qui definit les menus.*/
+	   static void definitionContenu(JFrame frame) {
+	   // menu bar
+	   JMenuBar menuBar = new JMenuBar();
+	   definitionMenus(menuBar);
+	   frame.setJMenuBar(menuBar);
+	   frame.setSize(350, 250);
+	   frame.setVisible(true);
+	   }
+	  /** Fonction qui definit les menus de l'interface graphique et appelle la fonction qui definit les sous-menus.*/
+	 static void definitionMenus(JMenuBar menuBar) {
+		   // Menu Paquet, P
+		   CstrMenu MenuP = new CstrMenu("Paquet", menuBar);
+		   // touche raccourci
+		   MenuP.setMnemonic(KeyEvent.VK_P);
+		   // Menu Noeud, N
+		   JMenu MenuN = new CstrMenu("Noeud",menuBar);
+		   MenuN.setMnemonic(KeyEvent.VK_N);
+		   
+		   definitonSousMenus(MenuP, MenuN);
+		   }
+	 /** Fonction qui definit les sous-menus de l'interface graphique et appelle la fonction qui definit les boutons radio de 
+	  * certains sous menus. Elle definit aussi les champs JText.
+	  * @param MenuP le menu des fonctionnalites associees a l'envoi de paquet
+	  * @param MenuN le menu des fonctionnalites associees aux noeuds*/
+	   static void definitonSousMenus(JMenu MenuP, JMenu MenuN) {
+		   // Paquet->Emetteur Submenu, E
+		   JMenu EmetteurMenu = new CstrMenu("Emetteur", MenuP);
+		   EmetteurMenu.setMnemonic(KeyEvent.VK_E);
+		   
+		   // Paquet->Recepteur Submenu, R
+		   JMenu RecepteurMenu = new CstrMenu("Recepteur",MenuP);
+		   RecepteurMenu.setMnemonic(KeyEvent.VK_R);
+
+		   // Paquet->Contenu Submenu, C
+		   JMenu ContenuMenu = new CstrMenu("Contenu",MenuP);
+		   ContenuMenu.setMnemonic(KeyEvent.VK_C);
+		   
+		   // Paquet->Contenu->JTextField
+		   JTextField jtf = new JTextField("Entrez votre contenu");
+		   JLabel label = new JLabel("Un JTextField");
+		   ContenuMenu.add(jtf);
+		  
+		   // Noeud->Activer Submenu, A
+		   JMenu ActiverMenu = new CstrMenu("Activer",MenuN);
+		   ActiverMenu.setMnemonic(KeyEvent.VK_A);
+
+		   // Noeud->Desactiver Submenu, D
+		   JMenu DesactiverMenu= new CstrMenu("Desactiver",MenuN);
+		   DesactiverMenu.setMnemonic(KeyEvent.VK_D);
+
+		   // Noeud->Ajouter Submenu, A
+		   JMenu AjouterMenu= new CstrMenu("Ajouter",MenuN);
+		   AjouterMenu.setMnemonic(KeyEvent.VK_A);
+		   
+		// Noeud->Ajouter->JTextField
+		   JTextField jtf2 = new JTextField("Entrez votre contenu");
+		   JLabel label2 = new JLabel("Un JTextField");
+		   AjouterMenu.add(jtf2);
+		   
+		   // Noeud->Supprimer Submenu, S
+		   JMenu SupprimerMenu= new CstrMenu("Supprimer",MenuN);
+		   ActiverMenu.setMnemonic(KeyEvent.VK_S); 
+		   
+		   // Noeud->Changer Mobilite Submenu, M
+		   JMenu MobiliteMenu= new CstrMenu("Mobilite",MenuN);
+		   MobiliteMenu.setMnemonic(KeyEvent.VK_M);
+		   
+		   radioGroup(EmetteurMenu, RecepteurMenu,ActiverMenu,DesactiverMenu,SupprimerMenu,MobiliteMenu);
+		   }
+	   
+	  
+	   // ButtonGroup pour les radio buttons
+	   /** Fonction qui definit les groupes de bouton ButtonGroup des sous menus permettant un choix de noeuds.
+	    * Apres avoir definit les ButtonGroup, elle genere les boutons JRadio de maniere generique, puis les affecte
+	    * a leurs ButtonGroups respectifs.
+	    * Elle utilise la fonction qui cree une liste de JRadioBoutton et les affecte au JMenu et au ButtonGroup correspondant.
+	    * @param EmetteurMenu
+	    * @param RecepteurMenu
+	    * @param ActiverMenu
+	    * @param DesactiverMenu
+	    * @param SupprimerMenu
+	    * @param MobiliteMenu
+	    */
+	   static void radioGroup (JMenu EmetteurMenu, JMenu RecepteurMenu,JMenu ActiverMenu,JMenu DesactiverMenu,JMenu SupprimerMenu,JMenu MobiliteMenu){
+		   ButtonGroup directionGroupE = new ButtonGroup();
+		   ButtonGroup directionGroupR = new ButtonGroup();
+		   ButtonGroup directionGroupA = new ButtonGroup();
+		   ButtonGroup directionGroupD = new ButtonGroup();
+		   ButtonGroup directionGroupS = new ButtonGroup();
+		   ButtonGroup directionGroupM = new ButtonGroup();
+		   
+		   // Liste de noeuds utilisables pour les sous menus.
+		   ArrayList<JRadioButtonMenuItem> listeNoeudsE=new ArrayList<JRadioButtonMenuItem>();
+		   instancierNoeuds(listeNoeudsE, EmetteurMenu, 6, directionGroupE);
+		   
+		   ArrayList<JRadioButtonMenuItem> listeNoeudsR=new ArrayList<JRadioButtonMenuItem>();
+		   instancierNoeuds(listeNoeudsR, RecepteurMenu, 6, directionGroupR);
+		   
+		   ArrayList<JRadioButtonMenuItem> listeNoeudsA=new ArrayList<JRadioButtonMenuItem>();
+		   instancierNoeuds(listeNoeudsA, ActiverMenu, 6, directionGroupA);
+		   
+		   ArrayList<JRadioButtonMenuItem> listeNoeudsD=new ArrayList<JRadioButtonMenuItem>();
+		   instancierNoeuds(listeNoeudsD, DesactiverMenu, 6, directionGroupD);
+		   
+		   ArrayList<JRadioButtonMenuItem> listeNoeudsS=new ArrayList<JRadioButtonMenuItem>();
+		   instancierNoeuds(listeNoeudsS, SupprimerMenu, 6, directionGroupS);
+		   
+		   ArrayList<JRadioButtonMenuItem> listeNoeudsM=new ArrayList<JRadioButtonMenuItem>();
+		   instancierNoeuds(listeNoeudsM, MobiliteMenu, 6, directionGroupM);
+			  
+		 }
+	 //Non utilise pour le moment. Permettrait de generer beaucoup de sous menus par menu mais avec moins de precision.  
+	static void instancierSubMenus(ArrayList<JMenu> menus, String[] noms, JMenu destination, int nbrMenus) {
+	   	for (int i=0;i<nbrMenus;i++) {
+	   		menus.add(new JMenu(noms[i]));
+	   		destination.add(menus.get(i));
+	   	}
+	 }
+	/** Fonction qui cree un nombre n de noeuds (ArrayList de JRadioButton) 
+	  * et les affecte a la fois a leur JMenu et a leur ButtonGroup
+	  *@param ArrayList<JRadioButtonMenuItem> noeuds la liste des noeuds
+	  *@param JMenu destination le menu de destination
+	  *@param int nbrNoeuds le nombre de noeuds que l'on souhaite créer
+	  *@param ButtonGroup groupe le groupe de boutons auquel on veut affecter nos JRadioButton
+	  */
+	 static void instancierNoeuds (ArrayList<JRadioButtonMenuItem> noeuds, JMenu destination, int nbreNoeuds, ButtonGroup groupe) {
+		   	for (int i=0;i<nbreNoeuds;i++) {
+		   		noeuds.add(new JRadioButtonMenuItem("Noeud "+String.valueOf(i), true));
+		   		destination.add(noeuds.get(i));
+		   		groupe.add(noeuds.get(i));
+		   	}
+		   }
+	}
+

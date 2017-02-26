@@ -1,0 +1,73 @@
+Starting audit...
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:13:9: Commentaire javadoc manquant.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:14:5: Commentaire javadoc manquant.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:14:11: La variable 'couleur' devrait être privée et avoir des accesseurs.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:15: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:19:42: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:22: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:23: La première ligne doit se terminer avec un point.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:26: Balise javadoc @return manquante.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:26:47: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:27:43: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:28: L'instruction 'if' devrait utiliser des accolades  ('{' et '}').
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:38:57: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:42:67: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:43: La ligne excède 90 caractères.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:47: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:48:9: Commentaire javadoc manquant.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:48:33: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:50:20: Il manque une espace après 'for'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:50:54: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:55: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:59:34: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:62: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:66:46: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:70: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:75:52: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:78: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:83:44: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:86: La ligne excède 90 caractères.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:87:50: Instruction vide.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:90: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:94:30: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:97: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:101:42: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:104: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:109:36: 'couleur' masque un attribut.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:109:58: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:112: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:117:55: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:121: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:127:36: 'couleur' masque un attribut.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:127:71: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:134: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:135:5: Commentaire javadoc manquant.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:135:53: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:136:56: Il manque une espace avant '+'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:136:57: Il manque une espace après '+'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:137:42: Il manque une espace avant '-'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:137:43: Il manque une espace après '-'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:137:75: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:138:47: Il manque une espace avant '-'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:138:48: Il manque une espace après '-'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:147:53: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:148:12: Il manque une espace après 'for'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:148:38: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:152: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:156:34: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:158:20: Il manque une espace après 'for'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:158:74: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:159: La ligne excède 90 caractères.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:159:75: Il manque une espace avant '+'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:159:76: Il manque une espace après '+'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:159:78: Il manque une espace avant '%'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:159:79: Il manque une espace après '%'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:163: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:168: Balise javadoc @return manquante.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:168:64: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:171: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:173:33: Il manque une espace avant '{'.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:178: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:183: Line has trailing spaces.
+/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:184:33: Il manque une espace avant '{'.
+Audit done.

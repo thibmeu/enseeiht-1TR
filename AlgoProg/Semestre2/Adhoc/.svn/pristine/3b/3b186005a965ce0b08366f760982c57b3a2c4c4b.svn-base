@@ -1,0 +1,39 @@
+/**
+ * Cette classe est utilisé pour gérer plus facilement
+ * la position des noeuds
+ * @author LAMINE Abdelmalek
+ * @version 1.0
+ */
+
+public class Position {
+	
+	/** Abscisse */
+	private int x;
+	
+	/** Ordonné*/
+	private int y;
+	
+	public Position(int abs, int ord) {
+		x = abs;
+		y = ord;
+	}
+	
+	public void setX(int nvX) {
+		x = nvX;
+	}
+	
+	public void setY(int nvY) {
+		y = nvY;
+	}
+	
+	
+	/**@return l'abscisse du noeuds*/
+	public int getX() {
+		return x;
+	}
+	
+	/**@return l'ordonné du point*/
+	public int getY() {
+		return y;
+	}
+}

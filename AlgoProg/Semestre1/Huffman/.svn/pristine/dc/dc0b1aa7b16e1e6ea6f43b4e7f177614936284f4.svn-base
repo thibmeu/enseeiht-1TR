@@ -1,0 +1,192 @@
+/*******************************************************************************
+ *  Auteur   : Thibault Meunier
+ *  Objectif : Implantation de la List
+ ******************************************************************************/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "list.h"
+
+int noOrder(void* a, void* b)
+{
+	return 1;
+}
+
+void add_Cell(List this, Cell* cell, void* data)
+{
+	void* nData = NULL;
+	(this->init_data)(nData);
+	(this->equal_data)(nData, data);	//ici s'effectue une copie de la donnee --> Peut-on l'ignorer ?
+	Cell nouv = malloc(sizeof(struct Cell));
+	nouv->data = nData;
+	nouv->next = *cell;
+	*cell = nouv;
+}
+
+void delete_Cell(List this, Cell* cell)
+{
+	Cell tmp = (*cell)->next;
+	(this->destroy_data)((*cell)->data);
+	free(cell);
+	*cell = tmp;
+}
+
+void init_List(List* this, size_t size_data, void (*init_data)(void*), void (*destroy_data)(void*), void (*equal_data)(void*, void*), int (*compar_data)(void*, void*))
+{
+	*this = malloc(sizeof(struct List));
+	(*this)->cell = NULL;
+	(*this)->size_data = size_data;
+	(*this)->init_data = init_data;
+	(*this)->destroy_data = destroy_data;
+	(*this)->equal_data = equal_data;
+	(*this)-> compar_data = compar_data;
+}
+
+bool empty_List(List this)
+{
+	return this->cell == NULL;
+}
+
+size_t size_List(List this)
+{
+	Cell cell = this->cell;
+	size_t size;
+	for (size = 0; cell != NULL; size++)
+		cell = cell->next;
+	
+	return size;
+}
+
+void add_List(List this, void* data)
+{
+	Cell cur = this->cell;
+	
+	if(this->cell == NULL || (this->compar_data)(cur->data, data) == -1)
+		add_Cell(this, &cur, data);
+	else if ((this->compar_data)(cur->data, data) == 0)
+		;	//On pourrait faire une fonction update
+	else
+	{
+		Cell next = cur->next;
+		bool noTouch = true;
+		
+		while (noTouch)
+		{
+			if(next == NULL || (this->compar_data)(cur->data, data) == -1)
+			{
+				add_Cell(this, &(cur->next), data);
+				noTouch = false;
+			}
+			else if((this->compar_data)(cur->data, data) == 0)
+			{
+				;	//Toujours pas de fonction update
+				noTouch = false;
+			}
+			else
+			{
+				cur = next;
+				next = next->next;
+			}
+		}
+	}
+}
+
+void delete_List(List this, void* data)
+{
+	Cell cur = this->cell;
+	
+	if(cur != NULL)
+	{
+		Cell next = cur->next;
+		bool noTouch = true;
+		
+		if ((this->compar_data)(cur->data, data) == 0)
+		{
+			delete_Cell(this, &cur);
+			noTouch = false;
+		}
+
+		while (next != NULL && noTouch)
+		{
+			if ((this->compar_data)(cur->data, data) == 0)
+			{
+				delete_Cell(this, &(cur->next));
+				noTouch = false;
+			}
+			else
+			{
+				cur = next;
+				next = next->next;
+			}
+		}
+	}
+}
+
+void* front_List(List this)
+{
+	return this->cell->data;
+}
+
+void pop_front_List(List this)
+{
+	if (!empty_List(this))
+		delete_List(this, front_List(this));
+}
+
+void* back_List(List this)
+{
+	Cell cell = this->cell;
+	
+	while (cell != NULL)
+	{
+		if (cell->next == NULL)
+			return cell->data;
+		cell = cell->next;
+	}
+	return NULL;
+}
+
+void pop_back_List(List this)
+{
+	if (!empty_List(this))
+		delete_List(this, back_List(this));
+}
+
+bool has_data_List(List this, void* data)
+{
+	Cell cell = this->cell;
+	while (cell != NULL && (this->compar_data)(data, cell->data) != 0)
+		cell = cell->next;
+	return cell != NULL && (this->compar_data)(data, cell->data) == 0;
+}
+
+void* get_data_List(List this, void* data)
+{
+	Cell cell = this->cell;
+	while (cell != NULL && (this->compar_data)(data, cell->data) != 0)
+		cell = cell->next;
+	return cell->data;	//A noter : Je retourne un pointeur vers la donnee, et non une donnee copiee
+}
+
+void clear_List(List this)
+{
+	while(this->cell != NULL)
+		delete_Cell(this, &(this->cell));
+}
+
+void destroy_List(List* this)
+{
+	clear_List(*this);
+	free(this);
+	*this = NULL;
+}
+
+void* get_i_List(List this, int i)
+//Accede au i-eme element de la liste, si il exite, NULL sinon
+{
+	Cell cell = this->cell;
+	for (int iCell = 0; cell != NULL && iCell < i; iCell++)
+		cell = cell->next;
+	return (cell == NULL) ? NULL : cell->data;	//A noter : Je retourne un pointeur vers la donnee, et non une donnee copiee
+}

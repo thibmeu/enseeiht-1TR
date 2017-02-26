@@ -1,0 +1,28 @@
+CC=gcc
+CFLAGS=-Wall -std=c11 -c
+LDFLAGS=-Wall -std=c11
+SOURCES=pile.c test_pile.c afficher_entier.c
+OBJECTS=pile.o
+EXECUTABLE1=test_pile
+EXECUTABLE2=afficher_entier
+
+$(EXECUTABLE1):$(OBJECTS) test_pile.o
+	$(CC) $(LDFLAGS) $^ -o $@
+
+$(EXECUTABLE2):$(OBJECTS) afficher_entier.o
+	$(CC) $(LDFLAGS) $^ -o $@
+
+clean:
+	rm *.o $(EXECUTABLE)
+
+depend:
+	makedepend $(SOURCES)
+# DO NOT DELETE
+
+pile.o: pile.h /usr/include/stdio.h /usr/include/features.h
+pile.o: /usr/include/stdc-predef.h /usr/include/sys/cdefs.h
+pile.o: /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h
+pile.o: /usr/include/bits/types.h /usr/include/bits/typesizes.h
+pile.o: /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h
+pile.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
+pile.o: /usr/include/assert.h

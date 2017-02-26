@@ -1,0 +1,3 @@
+#define TESTS_TH__H
+#include "tests-sda.c"
+#define INIT init_SDA(&sda, size, hash_function)

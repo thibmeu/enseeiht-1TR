@@ -1,0 +1,14 @@
+
+
+Auteur: Lamine Abdelmalek
+
+
+Différents tests envisagés:
+
+-Tester les différents modes de mobilité.
+-Tester que la table de routage est mise a jour dés qu'un noeud faisant partie d'un chemin est éteint ou est hors de portée.
+-S'assurer que les paquets sont bien arrivés a leur destinataire
+-Tester la bonne gestion des paquets en attente/transition.
+-Tester la fonction qui demandeRoute qui permet d'initier une demande de route vers un autre noeud du réseaux
+-La taille d'un paquet etant fixee, on pourrait etre amené a fragmenter certains paquets, il serait donc necessaire de verifier que la reconstruction des messages se fait sans souci.
+ 

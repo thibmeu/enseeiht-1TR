@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "uncompress.h"
+
+int main(int argc, char** argv)
+{
+	FILE* input = fopen(argv[1], "rb");
+	
+	size_t sizeNameInput = strlen(argv[1]);
+	char* nameOutput = malloc((sizeNameInput+3)*sizeof(char));
+	
+	strncpy(nameOutput, argv[1], sizeNameInput - strlen(".hf"));
+	nameOutput[sizeNameInput - strlen(".hf")] = '\0';
+	strcat(nameOutput, "i");
+	//printf("Nom du fichier sortie : \"%s\"\n", nameOutput);
+	FILE* output = fopen(nameOutput, "w");
+	
+	free(nameOutput);
+	uncompress(input, output);
+	
+	fclose(input);
+	fclose(output);
+	return 0;
+}

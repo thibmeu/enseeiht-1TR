@@ -1,0 +1,79 @@
+/*******************************************************************************
+ *  Auteur   : 
+ *  Objectif : Implantation de la LCA
+ ******************************************************************************/
+
+#include "lca.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void init_LCA(LCA* this)
+{
+	*this = NULL;
+}
+
+bool empty_LCA(LCA this)
+{
+	return this == NULL;
+}
+
+void add_LCA(LCA* this, Clef key, Donnee value)
+{
+	LCA cur = *this;
+	LCA next = cur->next;
+	bool noTouch = true;
+	
+	while (next != NULL && noTouch)
+	{
+		if(strcmp(next->couple.key, key) == 0)
+		{
+			next->couple.key = key;
+			noTouch = false;
+		}
+		if(strcmp(next->couple.key, key) == -1)
+		{
+			LCA nouv = malloc(sizeof(LCA));
+			init_Couple(&(nouv->couple), key, value);
+			nouv->next = next;
+			cur->next = nouv;
+			noTouch = false;
+		}
+		if(strcmp(next->couple.key, key) == 1)
+		{
+			cur = next;
+			next = next->next;
+		}
+	}
+}
+
+void delete_LCA(LCA* this, Clef key);
+
+bool has_key_LCA(LCA this, Clef key);
+
+Donnee getValue_LCA(LCA this, Clef key);
+
+void clear_LCA(LCA* this)
+{
+	while(*this != NULL)
+	{
+		LCA tmp = (*this)->next;
+		free(*this);
+		*this = tmp;
+	}
+}
+
+void destroy_LCA(LCA* this)
+{
+	clear_LCA(this);
+}
+
+void print_LCA(LCA this)
+{
+	while(this != NULL)
+	{
+		printf("-->[ \"%s\"=%d ]", this->couple.key, this->couple.value);
+		this = this->next;
+	}
+	printf("--E\n");
+}

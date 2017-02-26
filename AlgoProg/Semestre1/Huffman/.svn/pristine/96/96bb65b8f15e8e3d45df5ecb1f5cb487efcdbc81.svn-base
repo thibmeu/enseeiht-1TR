@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "compress.h"
+
+#define CHAR_MAX 256
+
+void init_freq(Couple* couples)
+{
+	for (int iCouple = 0; iCouple < CHAR_MAX; iCouple++)
+		init_Couple(&couples[iCouple], 0, (char) iCouple);
+}
+
+int frequence(FILE* fichier, Couple* couples)
+{
+	char caract = 'a';
+	int size_file = 0;
+	while (!feof(fichier))
+	{
+		caract = fgetc(fichier);
+		couples[(int)caract].freq += 1;
+		size_file++;
+	}
+	return size_file;
+}
+
+void tri_Couple(Couple* couples)
+{
+	qsort(couples, CHAR_MAX, sizeof(Couple), compar_Couple);
+}
+
+int build_Tree(Couple* couples, Tree* tree){
+	int iCouple = 0;
+	int size_tree;
+	List list;
+	Tree tree_tampon;
+	init_List(&list, sizeof(Tree), init_Tree, free, equal_Tree, compar_Tree);
+	
+	//on passe toutes les cellules ou la frequence est nulle
+	while (couples[iCouple].freq == 0)
+		iCouple++;
+	size_tree = CHAR_MAX - iCouple;
+	
+	//on transforme la liste de cellules en liste d'arbres a un noeud
+	while (iCouple < CHAR_MAX)
+	{
+		couple_to_Tree(&tree_tampon, couples[iCouple]);
+		add_List(list, tree_tampon);
+		iCouple++;
+	}
+	
+	fusion_List_Tree(list);
+	
+	//On recupere le seul arbre de la liste qui est l'arbre fusionne
+	*tree = list->cell->data;
+	
+	return size_tree;
+}
+
+void description_Tree(Tree tree, Binary* description, Value* caracs, int iCarac)
+{
+	if (tree != NULL)
+	{
+		if (!is_leef(tree))
+		{
+			caracs[iCarac] = tree->couple.value;
+			iCarac ++;
+		}
+		
+		left_shift_Binary(description, 1); //ajouter un zeo en fin de sequence binaire
+		description_Tree(tree->left, description, caracs, iCarac);
+		
+		
+		left_shift_Binary(description, 1);
+		or_Binary(description, un_Binary()); //ajouteur un 1 en fin de sequence binaire
+		
+		description_Tree(tree->left, description, caracs, iCarac);
+	}
+}
+
+void write_forhead(FILE* output, int size_txt, int size_tree, Value* caracs)
+{
+	fprintf(output, "%d", size_txt);
+	fprintf(output, "%c", (char) size_tree);
+	for (int iChar = 0; iChar < size_tree; iChar++)
+		fprintf(output, "%c", caracs[iChar]);
+}
+

@@ -1,0 +1,19 @@
+   Fichiers d'exemple pour l'exercice "autotest".
+
+   Compiler le programme de tri de la façon suivante :
+
+make
+
+   Utiliser le programme de la façon suivante
+
+./tri-selection < input > output
+
+   Le fichier input doit comporté un entier par ligne, et -1 sur la
+dernière ligne.
+
+   Le répertoire auto_test contient 999 fichiers de test nommés
+xyz.input et xyz.output. Dans trois cas, le résultat n'est pas celui
+attendu. Attention, il s'agit en fait d'une incohérence volontaire des
+fichiers, mais on pourra considérer ici qu'il s'agit d'une erreur du
+programme à tester.
+

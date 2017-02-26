@@ -1,0 +1,21 @@
+#include "compress-commun.h"
+
+void construct_table_corresp(Tree tree, Binary output[CHAR_MAX], Value* caracs, size_t sizeTree, Byte codeCarac, size_t tailleCode)
+{
+	if (tree != NULL)
+	{
+		if (is_leaf_Tree(tree))
+		{
+			//Binary code;
+			destruct_Binary(output+(unsigned char)tree->couple.value);
+			Byte codeCarac2 = codeCarac;
+			init_fromByte_Binary(output+(unsigned char)tree->couple.value, &codeCarac2, tailleCode);
+			//code = NULL;
+		}
+		else
+		{
+			construct_table_corresp(tree->left, output, caracs, sizeTree, codeCarac << 1, tailleCode + 1);
+			construct_table_corresp(tree->right, output, caracs, sizeTree, (codeCarac << 1) + 1, tailleCode + 1);
+		}
+	}
+}

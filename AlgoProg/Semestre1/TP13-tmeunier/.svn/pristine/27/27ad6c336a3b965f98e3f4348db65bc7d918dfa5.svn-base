@@ -1,0 +1,68 @@
+CC=c99
+CFLAGS=-g -Wall -pedantic
+# -ansi 
+#
+GENERES =	\
+	lca.h	\
+	th.h	\
+	exemple-lca.c	\
+	exemple-th.c	\
+	interpreteur-lca.c	\
+	interpreteur-th.c	\
+
+
+EXE =	\
+	exemple-lca-iterative	\
+	exemple-lca-recursive	\
+	exemple-th	\
+	interpreteur-lca-iterative	\
+	interpreteur-lca-recursive	\
+	interpreteur-th	\
+
+
+all:: ${GENERES} $(EXE)
+
+
+interpreteur-lca-iterative: interpreteur-lca.o lca-iterative.o
+	$(CC) $(LDFLAGS) -o $@ $^
+
+interpreteur-lca-recursive: interpreteur-lca.o lca-recursive.o
+	$(CC) $(LDFLAGS) -o $@ $^
+
+interpreteur-th: interpreteur-th.o lca-iterative.o th.o fonctions-hachage.o
+	$(CC) $(LDFLAGS) -o $@ $^
+
+exemple-lca-iterative: exemple-lca.o lca-iterative.o
+	$(CC) $(LDFLAGS) -o $@ $^
+
+exemple-lca-recursive: exemple-lca.o lca-recursive.o
+	$(CC) $(LDFLAGS) -o $@ $^
+
+exemple-th: exemple-th.o th.o fonctions-hachage.o lca-iterative.o
+	$(CC) $(LDFLAGS) -o $@ $^
+
+lca.h: sda.h
+	cat $< | sed -e s/sda/lca/g -e s/SDA/LCA/g > $@
+
+th.h: sda.h
+	cat $< | sed -e s/sda/th/g -e s/SDA/TH/g > $@
+
+%-lca.c: %-sda.c
+	cat $< | sed -e s/sda/lca/g -e s/SDA/LCA/g > $@
+
+%-th.c: %-sda.c
+	cat $< | sed -e s/sda/th/g -e s/SDA/TH/g > $@
+
+# les dépendances suivantes sont incomplètes
+th.o: th.h
+lca-iterative.o: lca.h
+lca-recursive.o: lca.h
+exemple-lca.o: lca.h
+exemple-th.o: th.h
+
+
+clean::
+	rm -f *.o
+	rm -f ${GENERES}
+	rm -f $(EXE) a.out
+

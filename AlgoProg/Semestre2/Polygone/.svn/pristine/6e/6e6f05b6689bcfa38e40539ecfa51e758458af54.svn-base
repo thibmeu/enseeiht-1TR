@@ -1,0 +1,160 @@
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/** Polygone modélise un polygone géométrique dans un plan équipé d'un
+ * repère cartésien.  Un polygone peut être affiché et translaté.
+ * Sa couleur peut etre obtenue. Des points peuvent etre ajoute.
+ *
+ * @author  Thibault Meunier
+ * @version 1
+ */
+
+public class Polygone {
+	private Point[] point;      //Liste des sommets
+    Color color;
+	
+	/** Construire un Polygone à partir de ses sommets.
+	 * @param point sommets
+	 */
+	public Polygone(Point... point){
+		this(Color.blue, point);
+	}
+	
+	/** Construire un Polygone à partir de sa couleur et de ses sommets.
+	 * @param color couleur
+	 * @param point sommets
+	 */
+	public Polygone(Color color, Point... point){
+		this.color = color;
+		this.point = new Point[point.length];
+        for (int iPoint = 0; iPoint < point.length; iPoint++){
+        	this.point[iPoint] = new Point(point[iPoint].getX(), point[iPoint].getY()); //Methode a implementer dans Point...
+        }
+	}
+	
+	public String toString(){
+		String coor = "";
+		for(Point curPoint : point){
+			coor += curPoint + " ";
+		}
+		return "<< " + coor + ">>";
+	}
+	
+	/** Obtenir la couleur du polygone.
+	 * @return la couleur du polygone
+	 */
+	public Color getCouleur(){
+		return color;
+	}
+	
+	/** Changer la couleur du polygone.
+	 * @param color nouvelle couleur
+	 */
+	public void setCouleur(Color color){
+		this.color = color;
+	}
+	
+	/** Teste si un indice de sommet est dans le polygone.
+	 * @param iSommet indice a tester
+	 * @return True si 0 <= iSommet < nbSommets
+	 */
+	private boolean isValidSommet(int iSommet){
+		return (0 <= iSommet) && (iSommet < getOrdre());
+	}
+	
+	/** Obtenir le iSommet-eme sommet du polygone.
+	 * @param iSommet indice du sommet
+	 * @return sommet (point) asocie a l'indice
+	 */
+	public Point getSommet(int iSommet){
+		if (isValidSommet(iSommet)){
+			Point curPoint = point[iSommet];
+			return new Point(curPoint.getX(), curPoint.getY());	//Methode a implementer dans Point...
+		}
+		return null;
+	}
+	
+	/** Obtenir l'ordre du polygone.
+	 * @return ordre du polygone
+	 */
+	public int getOrdre(){
+		return point.length;
+	}
+	
+	/** Ajouter un sommet a la fin du polygone.
+	 * @param nPoint sommet a ajouter
+	 */
+	public void ajouter(Point nPoint){
+		ajouter(nPoint, getOrdre());
+	}
+	
+	/** Ajouter un sommet a la fin du polygone.
+	 * @param color couleur
+	 * @param nPoint sommet a ajouter
+	 */
+	private void ajouter(Color color, Point nPoint){
+		ajouter(color, nPoint, getOrdre());
+	}
+	
+	/** Ajouter un sommet au polygone.
+	 * @param nPoint sommet a ajouter
+	 * @param iNPoint indice d'insertion
+	 */
+	public void ajouter(Point nPoint, int iNPoint){
+		ajouter(getCouleur(), nPoint, iNPoint);
+	}
+	
+	/** Ajouter un sommet au polygone.
+	 * @param color couleur
+	 * @param nPoint sommet a ajouter
+	 * @param iNPoint indice d'insertion
+	 */
+	private void ajouter(Color color, Point nPoint, int iNPoint){
+		if (isValidSommet(iNPoint) || (iNPoint == getOrdre())){
+			Point curPoint = new Point(nPoint.getX(), nPoint.getY());
+			curPoint.setCouleur(color);
+			insert(iNPoint, curPoint);
+		}
+	}
+	
+    private void insert(int iNPoint, Point curPoint){
+        point = Arrays.copyOf(point, point.length+1);
+        for (int iPoint = point.length-1; iPoint > iNPoint; iPoint--){
+            point[iPoint] = point[iPoint-1];
+        }
+        point[iNPoint] = curPoint;
+    }
+
+	/** Translater le polygone.
+	 * @param dx déplacement suivant l'axe des X
+	 * @param dy déplacement suivant l'axe des Y
+	 */
+	public void translater(double dx, double dy){
+		for(Point curPoint : point){
+			curPoint.translater(dx, dy);
+		}
+	}
+	
+	/** Determiner le perimetre du polygone.
+	 * @return distance entre this et autre
+	 */
+	public double perimetre(){
+		double peri = 0;
+		for(int iPoint = 0; iPoint < point.length; iPoint++){
+			peri += point[iPoint].distance(point[(iPoint+1)%point.length]);
+		}
+		return peri;
+	}
+	
+	/** Construire un rectangle à partir de ses deux sommets opposes.
+	 * @param a sommet inferieur gauche
+	 * @param c sommet superieur droit
+	 */
+	public static Polygone creerRectangle(Point a, Point c){
+		Point b = new Point(c.getX(), a.getY());
+		Point d = new Point(a.getX(), c.getY());
+		return new Polygone(a, b, c, d);
+	}
+}

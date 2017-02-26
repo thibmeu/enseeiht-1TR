@@ -1,0 +1,28 @@
+#include "lca-specifique.h"
+
+//1. Initialiser une SDA. La SDA ainsi initialisee est vide.
+bool unit_init_LCA(SDA *this);
+
+//2. Indiquer si une SDA est vide ou non.
+bool unit_empty(SDA this);
+
+//3. Ajouter dans une SDA une donnee en precisant sa clef. Si la clef est dejà utilisee, la nouvelle donnee remplace la donnee precedemment associee à cette clef.
+bool unit_add(SDA* this, Clef key, Donnee value);
+
+//4. Supprimer d’une SDA la donnee associee à une clef. Si la clef n’est pas utilisee dans la SDA, la SDA n’est pas modifiee.
+bool unit_delete(SDA* this, Clef key);
+
+//5. Indiquer si une clef est utilisee dans une SDA. Une clef est utilisee par une SDA si une donnee a ete enregistree avec cette clef.
+bool unit_has_key(SDA this, Clef key);
+
+//6. Recuperer la donnee associee à une clef. On considère que cette clef doit necessairement etre une clef utilisee dans la SDA.
+bool unit_getValue(SDA this, Clef key);
+
+//7. Vider une SDA : supprimer toutes les donnees qu’elle contient. Elle est alors vide.
+bool unit_clear(SDA* this);
+
+//8. Detruire une SDA, c’est-à-dire liberer toutes les ressources qu’elle utilise.
+bool unit_destroy(SDA* this);
+
+//9. Afficher une SDA, c’est-à-dire tous les couples (clef, donnee) enregistres dans la SDA. Cet affichage est à des fins de mise au point (voir section 1.4)
+bool unit_printSDA(SDA this);

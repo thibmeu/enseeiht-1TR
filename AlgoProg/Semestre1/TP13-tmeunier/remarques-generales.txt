@@ -1,0 +1,62 @@
+2016 01 15 - TP13
+Commentaires Rendu1  
+
+Remarques Générales suite au Rendu 1
+
+Spécifications :
+- Il faut spécialiser les sous-programmes de la LCA et de la TH en les ajoutant le suffixe  _SDA dans sda.h. 
+- Ajouter les pré/post conditions + invariants de type, commentaires ! 
+- Il faut pouvoir paramétrer la taille et la fonction de hachage d'une TH. Le prévoir dans la définition du type TH.
+- Init_LCA n'a pas la même signature que init_TH -> Pour TH, on doit pouvoir paramétrer la taille et la fonction de hachage
+- Utiliser LISEZ-MOI.txt pour donner des explications au correcteur si besoin.
+- Pas de typedef a l'intérieur de la définition d'un enregistrement. 
+- Ne pas mettre la définition des structures de données dans types.h, mais dans lca-specifique.h et th-specifique.h
+
+Implantation 
+- Ordre lexicographique des clefs non nécessaire, et beaucoup plus compliqué (notamment si on veut profiter des optimisations possibles) !
+- Le plus simple est d´ajouter les nouvelles cellules *au début*.
+- Lorsqu´on ajoute une donnée, si la clef existe déjà, il faut remplacer la valeur. Ainsi, il faut d´abord parcourir la liste chaînée à la recherche de la clef, et allouer une cellule seulement si la clef n´est pas trouvée. 
+- Il doit y avoir le moins de code dupliqué possible.
+  Par exemple, pour la LCA, les fonctions vider et détruire font exactement la même chose : il est alors judicieux d´appeler la fonction vider depuis la fonction détruire.
+- Dans le même ordre d´idée, il est inutile de recoder toutes les fonctions de manipulation des listes chaînées dans la TH : il suffit de réutiliser les fonctions de la LCA !
+- Les codes du type
+    if (condition) {
+        return true;
+    } else {
+        return false;
+    }
+ donnent une irrésistible envie d´enlever des points ! 
+ Merci de seulement écrire « return condition; » ->   exemple : « return curseur == NULL; »).
+- Commentez le code ! 
+  Inutile d´écrire un roman, mais indiquez à quoi servent les variables locales, mettez les principales étapes du raffinage des SP, etc.  
+- Utiliser des noms de variables et fonctions explicites !
+- Attention lorsque vous accédez au champ d´un pointeur sur une structure :
+  si le pointeur est nul, « ptr->champ » provoquera un segfault.
+  Par exemple, « lca->suivante » provoquera un segfault si la LCA est vide.
+- Ne pas oublier de comparer les clefs avec la fonction strcmp. Attention : les chaînes sont égales si la fonction retourne *0* (cf la page de man).
+- Pour la TH, il faut allouer un tableau avec malloc (et donc le libérer dans la fonction détruire en plus d´appeler la fonction vider).
+- Il ne suffit pas de mettre '-1' dans la donnée pour la supprimer de la liste ou de la table -> il faut supprimer la cellule.
+  Ceci est valable pour les SP détruire et vider.
+- Vider une LCA -> ne pas juste mettre le pointeur a NULL !!!! Il faut DESALLOUER la mémoire. 
+- Dans lca.c ou th.c, attention de bien utiliser les noms des SP correspondants au module et non les identifiants génériques de sda.h (*_lca ou *_th)  
+
+Tests
+- Votre code DOIT fonctionner sur les machines de l'N7.  
+- Utiliser le framework Seatest pour faire vos tests (cf. https://code.google.com/p/seatest/)
+- Tester TOUS vos exécutables avec Valgrind ou Valkyrie pour détecter les fuites de mémoire 
+- Il faut créer les fichiers tests-lca-iterative.c, tests-lca-recursive.c et tests-th.c, les règles pour les compiler dans le makefile et les ajouter au SVN. 
+- Ces tests permettent de tester individuellement les sous-programmes des modules lca et th. 
+- Dans les tests, il faut souvent initialiser une SDA non vide (avec des données). Il est conseillé de factoriser votre code à ce niveau en créant un SP qui retourne une SDA initialisée avec un certain nombre de données enregistrées.   
+- Pour le test d'un SP, il faut lancer plusieurs cas de tests. Par exemple, pour l'ajout, il ne suffit pas de tester l'ajout d'une nouvelle donnée dans une liste vide. Il faut aussi tester l'ajout dans une SDA non-vide, dans une SDA qui contient déjà la clé.... etc. Ou encore vérifier ce qui se passe si on cherche a supprimer une donnée d'une liste vide, d'une liste avec un seul élément. 
+- Il n'est pas nécessaire de créer un module pour les tests (fichier test-lca.h inutile). 
+- Mettre des commentaires dans vos tests !  Aussi ...
+
+Interpréteur
+- On ne cherche pas à rendre l'interpréteur robuste aux éventuelles erreurs de formatage du fichier. On suppose ici que le fichier lu est correctement formaté.
+- Il sera utilisé pour les automatiser *nos* tests de *vos* programmes.  S'il ne fonctionne pas, vos modules seront donc considérés comme ne fonctionnant pas.
+
+Exemples 
+- Compléter l'exemple du fichier exemple-sda.c en respectant les commentaires du main(). Si les asserts ne passent pas, il y a une erreur dans votre code et la gestion de la clef.
+
+Performances
+- Voir la trace du lancement de la comparaison des 2 implantations (LCA, TH) avec pour la TH au moins deux fonctions de hachage différentes.  

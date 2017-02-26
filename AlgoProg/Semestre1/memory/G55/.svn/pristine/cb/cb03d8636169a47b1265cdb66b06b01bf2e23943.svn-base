@@ -1,0 +1,164 @@
+Groupe  : 55
+Membres : Thibault Meunier, Hugo Montal
+--------------------------------------------------------------------------------
+
+
+Consigne : Dans ce fichier, il faut répondre à la place des "..." et sur les
+lignes qui les suivent.  Le texte déjà écrit doit être conservé !
+
+
+=====[ Raffinages ]=============================================================
+
+-- Ne donner que les niveaux de raffinages qui sont informatifs.   Il est
+-- généralement inutile de donner le dernier niveau de raffinage s'il ne
+-- contient pas d'étapes non élémentaires.
+
+Constantes:
+	NB_CARTES   <- 52
+	NB_ENSEIGNES <- 4
+	NB_COULEURS NB_ENSEIGNES/2
+	txtEnseigne[NB_ENSEIGNES] <- {"PIQ", "COE", "CAR", "TFL"}
+	NB_VALEURS  <- 13
+	txtValeur <- {"AS ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", "10 ", "VLT", "DME", "ROI"}
+	NB_ETAPES 2
+	NB_CARTES_ETOURDI 10
+	TAILLE_LIGNE 3
+	TAILLE_COLONNE 6
+	DECALAGE 1
+
+const Position memoireVide = {-1, -1}
+
+Types:
+	Enumeration Enseigne{PIQUE, COEUR, CARREAU, TREFLE}
+	Enumeration Valeur{AS, 2, 3, 4, 5, 6, 7, 8, 9, 10, VALET, DAME, ROI}
+	Enumeration Difficulte{NAIF, EXPERT, ETOURDI}
+	Enumeration EtatCarte = {VISIBLE, CACHEE, RETIREE}
+	Structure Position:
+		ligne: Entier
+		colonne: Entier
+	Structure Carte:
+		enseigne: Enseigne
+		valeur: Valeur
+	Structure CarteReele:
+		carte: Carte
+		etat: EtatCarte
+	Structure Joueur: 
+		nom: Chaine de caractère
+		humain: Booleen
+		difficulte: Difficulte //Si le joueur est virtuel vaut NULL
+		memoire: Tableau de [NB_CARTES] Position --initialiser a {-1,-1} == memoire vide
+	Type Jeu52: Tableau de [NB_CARTES] Carte
+	Type Tapis: Tableau de [NB_ENSEIGNES][NB_VALEURS] CarteReele
+
+R0: Jouer au jeu du Memory
+
+R1: Raffinage de "Jouer au jeu du Memory"
+_Mise en place du jeu
+_Deroulement du jeu
+_Determination des vainqueurs
+
+R2: Raffinage de "Mise en place du jeu"
+_Initialisation du tapis	tapis:Tapis out, affTapis: out
+_L'utilisateur choisi un nombre de joueur et un mode pour chacun (humain, ou ordinateur (avec une difficulte (naif, expert, etourdi)). 		nbJoueurs:Entier out  joueur:Tableau de [nbJoueurs] Joueur out
+_Initialisation de la memoire des joueurs  //memoireVide = {-1, -1}	nbJoueurs:in, joueur: in/out
+
+R2: Raffinage de "Deroulement du jeu"
+_On determine aleatoirement le premier joueur. 	nbJoueurs:Entier in, iJoueur:Entier out
+_Tant qu'il reste des cartes sur le tapis, les joueurs jouent chacun leur tour nbJoueurs: in, iJoueur: in/out, joueur: in, tapis: in/out, scoreJoueur:Tableau de [nbJoueurs] Entier out
+
+R2: Raffinage de "Determination des vainqueurs"
+_Determiner l'indice des scores les plus eleves  nbJoueurs: in, scoreJoueur: in, vainqueur:Tableau de [nbJoueurs] Entier out
+_Affichage des scores et des vainqueurs   nbJoueurs: in, scoreJoueur: in, vainqueur: in, joueur: in
+
+R3: Raffinage de "Initialisation du tapis"
+_Creation d'un jeu de 52 cartes		jeu: Jeu52 out
+_Battue du jeu	jeu: in/out
+_Placement du jeu sur le tapis	jeu: in, tapis: Tapis out
+_Initialisation de l'affichage du tapis		tapis: in, tapisAffichage: out
+_nbCartesRestantes <- NB_CARTES	nbCartesRestantes:Entier out
+
+R3: Raffinage de "Tour d'un joueur"
+_Le joueur choisi successivement deux cartes et les retourne.  tapis: in/out, carteRetournee: Tableau de [NB_ETAPES] Position out
+_Afficher le tapis	tapisAffichage: in
+_Chaque joueur memorise les cartes retournees a sa facon	nbJoueurs: in, joueur:in/out, carteRetournee:in
+_Si celles-ci sont identiques	carteRetournee: in, tapis: in
+	_Il retire du jeu	tapis: in/out, carteRetournee: in, nbCartesRestantes: in/out
+	_Marque 1 point		scoreJoueur: in/out, iJoueur: in/out
+	_Rejoue
+_Sinon
+	_Il les replace faces cachees	tapis: in/out
+	_Termine son tour	nbJoueurs: in, iJoueur: in/out
+
+R4: Raffinage de "Afficher le tapis"
+_Pour iLigne de 0 a (nbLignes*TAILLE_LIGNE+1)+2*DECALAGE
+	_Pour iColonne de 0 a (nbColonnes*TAILLE_COLONNE+1)+2*DECALAGE
+		Affficher tapisAffichage[iLigne][iColonne]
+	_Afficher Retour a la ligne
+
+R4: Raffinage de "Choix successif des cartes"
+-Pour iEtape de 0 a NB_ETAPES-1:
+	_Afficher le tapis	tapisAffichage: in
+	_Saisie d'une carte	posCarte:Position out
+	_La retourner		tapis: in/out, posCarte: in, tapisAffichage: in/out
+	_Stocke posCarte dans carteRetournee[iEtape]	posCarte: in, carteRetournee: in/out
+
+R5: Raffinage de "Saisie d'une carte"
+_Si le joueur est humain	carteRetournee: out
+	_Repeter
+		Lire la position de la carte
+	_Jusqu'a ce que la carte soit valide
+_Sinon				carteRetournee: out
+	_Selon difficulte Dans	joueur:in, iJoueur:in	---joueur[iJoueur].difficulte
+		NAIF:	IA Naif		nbCartesRestantes: in, iEtape: in
+		EXPERT:	IA Memoire	nbCartesRestantes: in, iJoueur: in, joueur:in
+		ETOURDI: IA Memoire	nbCartesRestantes: in, iJoueur: in, joueur:in
+
+R5: Raffinage "Changement carte" --Rendre visible ou cachee, retirer une carte du jeu
+affCarte[2][3]
+CarteReele* carte <- tapis[position.ligne][position.colonne]
+_Selon modifCarte Dans:
+	_VISIBLE:
+		affCarte[0] <- txtValeur[carte->carte.valeur]
+		affCarte[1] <- txtEnseigne[carte->carte.enseigne]
+	_CACHEE:
+		affCarte <- carteCachee
+	_RETIREE:
+		affCarte <- carteRetiree
+_carte->etat <- modifCarte
+_On place affCarte sur tapisAffichage a la bonne position
+
+R6: Raffinage de "IA Naif"
+_iCarte <- aleatoire()%(nbCartesRestantes-iEtape)	nbCartesRestantes: in, iEtape: in, iCarte: Entier out
+_On renvoie la position de la iCarte (parcours ligne, puis colonne)	iCarte: in
+
+R6: Raffinage de "IA Memoire"
+_dejaVuCarte: Tableau de [NB_COULEURS][NB_VALEURS] Booleen initialises a 0
+_Si il y a une carte precedente:
+	_dejaVuCarte[position carte precedente]
+_Tant qu'on n'a pas parcouru toutes les cartes en memoire et que la carte est toujours sur le tapis:
+	_Si On a deja vu la paire de la carte courante:
+		_Renvoie la position de la carte courante
+	_Sinon
+		_dejaVuCarte[position carte courante] <- 1  --((enseigne+1)/2)%2 si ==1 rouge
+On parcourt le tapis (gauche puis bas) pour trouver une carte cachee et non presente dans le tableau
+
+
+=====[ Tests ]==================================================================
+
+-- Expliquer rapidement comment vous avez testé votre programme.
+
+...
+
+
+=====[ Difficultés ]============================================================
+
+-- Indiquer les difficultés rencontrées et les solutions apportées.
+
+...
+
+
+=====[ Remarques diverses ]=====================================================
+
+...
+
+--------------------------------------------------------------------------------

@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "uncompress.h"
+
+int main(int argc, char** argv)
+{
+	FILE* input = fopen(argv[1], "rb");
+	size_t sizeText;
+	char sizeTree;
+	Value* caracs;
+	
+	read_forhead(input, &sizeText, &sizeTree, &caracs);
+	printf("tt: %lu, ta: %i\n", sizeText, sizeTree);
+	for (int i = 0; i < sizeTree; i++)
+		printf("%i\n", caracs[i]);
+	size_t nbLeaf = 0;
+	Tree tree;
+	init_Tree(&tree);
+	Byte byte;
+	fscanf(input, "%c", &byte);
+	byte = byte << 2;
+	size_t sizeByte = 6;
+	print_Byte(byte, sizeByte);
+	reconstruct_Tree(input, tree, &byte, &sizeByte, (size_t)sizeTree, &nbLeaf, caracs);
+	//print_Tree(tree);
+	
+	destruct_Tree(&tree);
+	free(caracs);
+	fclose(input);
+	return 0;
+}

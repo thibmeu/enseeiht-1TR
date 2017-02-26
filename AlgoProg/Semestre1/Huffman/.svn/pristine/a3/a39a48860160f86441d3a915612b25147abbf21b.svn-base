@@ -1,0 +1,36 @@
+#ifndef UNCOMPRESS_H
+#define UNCOMPRESS_H
+
+#include <stdio.h>
+#include "tree.h"
+#include "couple.h"
+#include "byte.h"
+#include "binary.h"
+#include "compress-commun.h"
+/*
+ * 
+ * */
+ 
+void print_Byte(Byte byte, size_t sizeByte);
+
+bool first_bit_Byte(Byte byte);
+
+void pop_back_Byte(Byte* byte);
+
+void add_empty_subTree(Tree tree, bool right);
+
+void read_forhead(FILE* input, size_t* sizeText, char* sizeTree, Value** caracsTree);
+
+int indice_tableau_Binary(Binary elmt, Binary* tableau, size_t sizeTab);
+
+void update_byte(Byte* byte, size_t* sizeByte, FILE* file);
+
+void reconstruct_Tree(FILE* input, Tree tree, Binary tamponLecture, size_t sizeTree, size_t* nbLeaf, Value* caracsTree);
+
+void write_fileDecompress(FILE* file, Tree tree);
+
+void write_body_uncompress(FILE* input, FILE* output, size_t sizeText, Binary* tableCorresp, size_t sizeTree ,Binary tamponLecture);
+
+void uncompress(FILE* input, FILE* output);
+
+#endif

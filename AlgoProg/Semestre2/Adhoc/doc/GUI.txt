@@ -1,0 +1,10 @@
+L'interface graphique est réalisée à l'aide de composants swings (JMenus).
+On utilise une JFrame et un CardLayout qui vont récupérer le contenu de l'interface graphique. Un écouteur (qui implémente ActionListener et redéfinit actionPerformed) permet de naviguer dans le menu contextuel à l'aide de la souris.
+
+Prochaines améliorations à apporter :
+_Il faut afficher une liste de noeuds cochables (bouton JRadio ?) pour les fonctionnalités qui demandent le choix d'un noeud.
+_Il faut afficher un champ qui récupère les entrées de l'utilisateur pour les
+autres fonctionnalités.
+
+
+

@@ -1,0 +1,18 @@
+#ifndef COMPRESS_COMMUN_H
+#define COMPRESS_COMMUN_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include "tree.h"
+#include "binary.h"
+#include "byte.h"
+
+void construct_table_corresp(Tree tree, Binary output[CHAR_MAX], Value* caracs, size_t sizeTree, Byte codeCarac, size_t tailleCode);
+//Necessite tableau output = 256
+
+void print_table_corresp(Binary* tableCorresp);
+
+void loadBar(int x, int n, int r, int w);
+
+#endif

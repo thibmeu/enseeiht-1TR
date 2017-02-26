@@ -1,0 +1,16 @@
+Analyse :
+    choix :
+	- attention, le modèle métier (ici le réseau) n'a pas à connaître
+	  l'interface utilisateur
+    Diagramme de classe :
+	- clarifier les relations :
+	    + GUI --- Simulateur
+	    + Simulateur --- Reseau
+	- Est-ce que la classe Noeud ne va pas être trop grosse ?
+    Jeux de tests :
+	- incomplet, en particulier en ce qui concerne le protocole DSR
+	- la planification du réseau est tardive.  Pourquoi ?
+	- Paquet : on ne gère pas la framentation du Paquet et la
+	  reconstitution du Message.
+
+

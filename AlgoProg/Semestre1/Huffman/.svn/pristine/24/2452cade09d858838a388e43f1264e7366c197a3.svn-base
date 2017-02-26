@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "compress.h"
+
+int main(int argc, char** argv){
+	if (argc != 2){
+		printf("Arguments incorrectes\n");
+		return 0;
+	}
+	
+	char* name_input = argv[1];
+	
+	FILE* input = fopen(name_input, "r");
+	
+	if (input == NULL){
+		printf("Il n'y a pas de fichier de ce nom dans le dossier\n");
+		return 0;
+	}
+	
+	char* name_output = malloc((strlen(name_input)+10)*sizeof(char));
+	
+	strcpy(name_output, name_input);
+	strcat(name_output, ".hf");
+	FILE* output = fopen(name_output, "wb");
+	
+	compress(input, output);
+	
+	if (input)
+		fclose(input);
+	if (output)
+		 fclose(output);
+	free(name_output);
+	
+	return 0;
+}

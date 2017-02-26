@@ -1,0 +1,24 @@
+/*******************************************************************************
+ *  Auteur   : 
+ *  Objectif : Implantation de la table de hachage
+ ******************************************************************************/
+
+#include "th.h"
+
+void init_TH(TH* this, size_t size, size_t (*hash_function)(const char*));
+
+bool empty_TH(TH this);
+
+void add_TH(TH* this, Clef key, Donnee value);
+
+void delete_TH(TH* this, Clef key);
+
+bool has_key_TH(TH this, Clef key);
+
+Donnee getValue_TH(TH this, Clef key);
+
+void clear_TH(TH* this);
+
+void destroy_TH(TH* this);
+
+void print_TH(TH this);

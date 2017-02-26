@@ -1,0 +1,232 @@
+echo		7 udp
+discard		9 udp		sink null
+daytime		13 udp
+msp		18 udp
+chargen		19 udp		ttytst source
+fsp		21 udp		fspd
+ssh		22 udp
+time		37 udp		timserver
+rlp		39 udp		resource	
+tacacs		49 udp
+re-mail-ck	50 udp
+domain		53 udp
+tacacs-ds	65 udp
+bootps		67 udp
+bootpc		68 udp
+tftp		69 udp
+gopher		70 udp
+http		80 udp				
+kerberos	88 udp		kerberos5 krb5 kerberos-sec	
+acr-nema	104 udp		dicom
+csnet-ns	105 udp		cso-ns
+rtelnet		107 udp
+pop2		109 udp		pop-2
+pop3		110 udp		pop-3
+sunrpc		111 udp		portmapper
+ntp		123 udp				
+pwdgen		129 udp
+loc-srv		135 udp		epmap
+netbios-ns	137 udp
+netbios-dgm	138 udp
+netbios-ssn	139 udp
+imap2		143 udp		imap
+snmp		161 udp
+snmp-trap	162 udp		snmptrap
+cmip-man	163 udp
+cmip-agent	164 udp
+mailq		174 udp
+xdmcp		177 udp
+nextstep	178 udp		NeXTStep NextStep	
+bgp		179 udp
+prospero	191 udp
+irc		194 udp
+smux		199 udp
+at-rtmp		201 udp
+at-nbp		202 udp
+at-echo		204 udp
+at-zis		206 udp
+qmtp		209 udp
+z3950		210 udp		wais
+ipx		213 udp
+imap3		220 udp				
+pawserv		345 udp
+zserv		346 udp
+fatserv		347 udp
+rpc2portmap	369 udp				
+codaauth2	370 udp				
+clearcase	371 udp		Clearcase
+ulistserv	372 udp
+ldap		389 udp
+imsp		406 udp
+svrloc		427 udp
+https		443 udp
+snpp		444 udp
+microsoft-ds	445 udp
+kpasswd		464 udp
+saft		487 udp
+isakmp		500 udp			
+rtsp		554 udp
+nqs		607 udp
+npmp-local	610 udp		dqs313_qmaster
+npmp-gui	611 udp		dqs313_execd
+hmmp-ind	612 udp		dqs313_intercell
+asf-rmcp	623 udp		
+qmqp		628 udp
+ipp		631 udp
+biff		512 udp		comsat
+who		513 udp		whod
+syslog		514 udp
+talk		517 udp
+ntalk		518 udp
+route		520 udp		router routed	
+timed		525 udp		timeserver
+netwall		533 udp				
+gdomap		538 udp
+dhcpv6-client	546 udp
+dhcpv6-server	547 udp
+afpovertcp	548 udp
+idfp		549 udp
+nntps		563 udp		snntp
+submission	587 udp
+ldaps		636 udp
+tinc		655 udp
+silc		706 udp
+webster		765 udp
+rsync		873 udp
+telnets		992 udp
+imaps		993 udp
+ircs		994 udp
+pop3s		995 udp
+socks		1080 udp
+proofd		1093 udp
+rootd		1094 udp
+openvpn		1194 udp
+rmiregistry	1099 udp
+kazaa		1214 udp
+nessus		1241 udp			
+lotusnote	1352 udp	lotusnotes
+ms-sql-s	1433 udp
+ms-sql-m	1434 udp
+ingreslock	1524 udp
+prospero-np	1525 udp
+datametrics	1645 udp	old-radius
+sa-msg-port	1646 udp	old-radacct
+kermit		1649 udp
+groupwise	1677 udp
+l2f		1701 udp	l2tp
+radius		1812 udp
+radius-acct	1813 udp	radacct
+msnp		1863 udp
+cisco-sccp	2000 udp
+nfs		2049 udp			
+gnunet		2086 udp
+rtcm-sc104	2101 udp
+gsigatekeeper	2119 udp
+gris		2135 udp
+cvspserver	2401 udp
+venus		2430 udp			
+venus-se	2431 udp			
+codasrv		2432 udp			
+codasrv-se	2433 udp			
+mon		2583 udp
+dict		2628 udp
+f5-globalsite	2792 udp
+gsiftp		2811 udp
+gpsd		2947 udp
+gds-db		3050 udp	gds_db
+icpv2		3130 udp	icp
+mysql		3306 udp
+nut		3493 udp
+distcc		3632 udp
+daap		3689 udp
+svn		3690 udp	subversion
+suucp		4031 udp
+sysrqd		4094 udp
+epmd		4369 udp
+remctl		4373 udp
+f5-iquery	4353 udp
+ipsec-nat-t	4500 udp			
+iax		4569 udp
+mtn		4691 udp
+radmin-port	4899 udp
+rfe		5002 udp			
+mmcc		5050 udp
+sip		5060 udp
+sip-tls		5061 udp
+aol		5190 udp
+xmpp-client	5222 udp	jabber-client
+xmpp-server	5269 udp	jabber-server
+cfengine	5308 udp
+mdns		5353 udp
+postgresql	5432 udp	postgres
+freeciv		5556 udp
+amqp		5672 udp
+ggz		5688 udp
+x11		6000 udp	x11-0
+x11-1		6001 udp
+x11-2		6002 udp
+x11-3		6003 udp
+x11-4		6004 udp
+x11-5		6005 udp
+x11-6		6006 udp
+x11-7		6007 udp
+gnutella-svc	6346 udp
+gnutella-rtr	6347 udp
+sge-qmaster	6444 udp	sge_qmaster
+sge-execd	6445 udp	sge_execd
+mysql-proxy	6446 udp
+afs3-fileserver 7000 udp	bbs
+afs3-callback	7001 udp
+afs3-prserver	7002 udp
+afs3-vlserver	7003 udp
+afs3-kaserver	7004 udp
+afs3-volser	7005 udp
+afs3-errors	7006 udp
+afs3-bos	7007 udp
+afs3-update	7008 udp
+afs3-rmtsys	7009 udp
+font-service	7100 udp	xfs
+http-alt	8080 udp
+bacula-dir	9101 udp
+bacula-fd	9102 udp
+bacula-sd	9103 udp
+xmms2		9667 udp
+zabbix-agent	10050 udp
+zabbix-trapper	10051 udp
+amanda		10080 udp
+hkp		11371 udp
+bprd		13720 udp
+bpdbm		13721 udp
+bpjava-msvc	13722 udp
+vnetd		13724 udp
+bpcd		13782 udp
+vopied		13783 udp
+wnn6		22273 udp
+kerberos4	750 udp		kerberos-iv kdc	
+kerberos-master	751 udp		kerberos_master	
+passwd-server	752 udp		passwd_server	
+zephyr-srv	2102 udp			
+zephyr-clt	2103 udp			
+zephyr-hm	2104 udp			
+poppassd	106 udp
+moira-ureg	779 udp		moira_ureg	
+omirr		808 udp		omirrd
+customs		1001 udp
+predict		1210 udp			
+ninstall	2150 udp
+afbackup	2988 udp
+afmbackup	2989 udp
+noclog		5354 udp			
+hostmon		5355 udp			
+rplay		5555 udp			
+omniorb		8088 udp
+mandelspawn	9359 udp	mandelbrot	
+kamanda		10081 udp
+smsqp		11201 udp
+xpilot		15345 udp
+sgi-cmsd	17001 udp		
+sgi-crsd	17002 udp
+sgi-gcd		17003 udp			
+isdnlog		20011 udp
+vboxd		20012 udp
+asp		27374 udp

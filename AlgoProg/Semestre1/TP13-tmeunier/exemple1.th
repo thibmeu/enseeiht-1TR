@@ -1,0 +1,14 @@
+size 5
+hash taille
+add x 1
+value x
+print
+add xx 2
+print
+add xxx 3
+print
+add xxxx 4
+print
+add xxxxx 5
+print
+end

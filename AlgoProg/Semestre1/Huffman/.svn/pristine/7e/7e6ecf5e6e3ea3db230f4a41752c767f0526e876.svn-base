@@ -1,0 +1,140 @@
+#include "binary.h"
+
+static void init_Byte(void* a)
+{
+	;
+}
+
+static void equal_Byte(void* a, void* b)
+{
+	*(char*)a = *(char*)b;
+}
+
+static int compar_Byte(void* a, void* b)
+{
+	return (*(char*)a < *(char*)b)? -1 : (*(char*)a > *(char*)b);
+}
+
+void init_Binary(Binary* binary, Byte* byte, size_t size)
+{
+	*binary = malloc(sizeof(Binary));
+	
+	init_List(&((*binary)->byte), sizeof(Byte), init_Byte, free, equal_Byte, compar_Byte);
+	for(int iByte = 0; iByte < size % sizeof(Byte); iByte++)
+	{
+		Byte* curByte = malloc(sizeof(Byte));
+		*curByte = byte[iByte];
+		add_List((*binary)->byte, curByte);
+	}
+	
+	(*binary)->size = size;
+}
+
+void destruct_Binary(Binary* binary)
+{
+	destroy_List(&((*binary)->byte));
+	free(binary);
+	*binary = NULL;
+}
+
+void swap_Binary(Binary a, Binary b)
+{
+	;
+}
+
+void concatenate_Binary(Binary* dest, Binary source);
+
+void write_Binary(Binary* binary, FILE* file)
+{
+	if (file != NULL)
+		while ((*binary)->size >= sizeof(Byte))
+		{
+			fprintf(file, "%c", front_Binary(*binary));
+			pop_front_Binary(binary);
+		}
+}
+
+int size_in_Byte(Binary binary)
+{
+	return binary->size % sizeof(Byte);
+}
+
+Byte front_Binary(Binary binary)
+{
+	//False : I need to extract a full byte != front
+	return *(Byte*)front_List(binary->byte);
+}
+
+void pop_front_Binary(Binary* binary)
+{
+	//Need to extract a full byte != front
+	//Also need to decrease the size
+	;
+}
+
+void left_shift_Binary(Binary* binary, int n);
+
+void right_shift_Binary(Binary* binary, int n);
+
+//Attention, j'ai oublie de reactualise la taille du binaire !!!
+
+void or_Binary(Binary* dest, Binary source)
+{
+	
+	//Align dest n source bytes
+	int shift = size_in_Byte(*dest) - size_in_Byte(source);
+	if (shift < 0)
+		swap_Binary(*dest, source);
+	
+	Cell* cellDest = (*dest)->byte->cell;
+	Cell* cellSource = source->byte->cell;
+	
+	while (shift != 0)
+	{
+		cellDest = cellDest->next;
+		shift = size_in_Byte(*dest) - size_in_Byte(source);
+	}
+	
+	//Or on each byte
+	while (cellDest != NULL)
+	{
+		*(char*)cellDest->data = *(char*)cellDest->data | *(char*)cellSource->data;
+		cellDest = cellDest->next;
+		cellSource = cellSource->next;
+	}
+}
+
+void and_Binary(Binary* dest, Binary source)
+{
+	//Align dest n source bytes
+	int shift = size_in_Byte(*dest) - size_in_Byte(source);
+	if (shift > 0)
+		swap_Binary(*dest, source);
+	
+	
+	
+	while (shift != 0)
+	{
+		pop_front_List((*dest)->byte);	//first bytes : and with 0
+		shift = size_in_Byte(*dest) - size_in_Byte(source);
+	}
+	
+	//And on each byte
+	Cell* cellDest = (*dest)->byte->cell;
+	Cell* cellSource = source->byte->cell;
+	while (cellDest != NULL)
+	{
+		*(char*)cellDest->data = *(char*)cellDest->data & *(char*)cellSource->data;
+		cellDest = cellDest->next;
+		cellSource = cellSource->next;
+	}
+}
+
+Binary un_Binary()
+{
+	Binary unBinary;
+	Byte unByte = 1;
+	init_Binary(&unBinary, &unByte, 1);
+	
+	return unBinary;
+}

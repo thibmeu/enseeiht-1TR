@@ -1,0 +1,53 @@
+/** Classe qui définit la forme générale d'un paquet ainsi que les différentes méthodes
+ * qui le gèrent.
+ * @author LAMINE Abdelmalek
+ * @version 1.0
+ */
+
+public class Paquet {
+	
+	
+	/** Le message contenu dans le paquet */
+	private Message message;
+	/** Le noeud source */
+	private String adresseIP;
+	/** la route qui mènent vers la destination */
+	private Route destination;
+	
+	
+	public Paquet(Message Mess, String IP, Route dest) {
+		message = Mess;
+		adresseIP = IP;
+		destination = dest;
+	}
+	
+	/**
+	 * @return la route vers la destination
+	 */
+	public Route getRoute() {
+		return destination;
+	}
+
+	
+	/**
+	 * @return le message contenu dans le paquet
+	 */
+	public Message getMessage() {
+		return message;
+	}
+	
+	/**
+	 * @return l'adresse du noeud source
+	 */
+	public String getIPSource() {
+		return adresseIP;
+	}
+	
+	/**
+	 * @return la taille du paquet
+	 */
+	public int getTaille() {
+		return message.getTaille() + destination.tailleRoute() + 4;
+	}
+
+}

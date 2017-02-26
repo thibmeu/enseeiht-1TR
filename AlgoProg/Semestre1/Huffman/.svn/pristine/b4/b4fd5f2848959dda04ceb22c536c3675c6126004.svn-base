@@ -1,0 +1,115 @@
+#include "tree.h"
+
+void init_Tree(void* tree)
+{
+	*(Tree*)tree = NULL;
+}
+
+void destruct_Tree(Tree* tree)
+{
+	if(!empty_Tree(*tree))
+	{
+		destruct_Tree(&((*tree)->left));
+		destruct_Tree(&((*tree)->right));
+		free(*tree);
+		*tree = NULL;
+	}
+}
+
+int compar_Tree(void* a, void* b)
+{
+	size_t freq_a = (*(Tree*) a)->couple.freq;
+	size_t freq_b = (*(Tree*) b)->couple.freq;
+	if (freq_a < freq_b)
+		return -1;
+	return (freq_a > freq_b);
+		
+}
+
+bool empty_Tree(Tree tree)
+{
+	return tree == NULL;
+}
+
+int size_Tree(Tree tree)
+{
+	if (empty_Tree(tree))
+		return 0;
+	return 1 + size_Tree(tree->left) + size_Tree(tree->right);
+}
+
+bool has_key_Tree(Tree tree, int freq)
+{
+	if (empty_Tree(tree))
+		return false;
+	
+	return tree->couple.freq == freq || has_key_Tree(tree->left, freq) || has_key_Tree(tree->right, freq);
+}
+
+bool is_leef(Tree tree)
+{
+	return tree->right == NULL && tree->left == NULL;
+}
+
+Value get_value_Tree(Tree tree, int freq)
+{
+	if (empty_Tree(tree))
+		return (char)0;
+	
+	if (tree->couple.freq == freq)
+		return tree->couple.value;
+	
+	return has_key_Tree(tree->left, freq) | has_key_Tree(tree->right, freq);
+}
+
+void print_Tree(Tree tree);
+
+void couple_to_Tree(Tree* tree, Couple couple)
+{
+	if (tree != NULL)
+		destruct_Tree(tree);
+	*tree = malloc(sizeof(struct Tree));
+	(*tree)->couple = couple;
+	(*tree)->left = NULL;
+	(*tree)->right = NULL;
+}
+
+void concatenate_Tree(Tree* dest, Tree source)
+{
+	Tree tree = malloc(sizeof(struct Tree));
+	init_Couple(&(tree->couple), '\0', (*dest)->couple.freq + source->couple.value);
+	tree->left = *dest;
+	tree->right = source;
+	*dest = tree;
+}
+
+void add_subTree(Tree* father, Tree source, bool right);
+
+void equal_Tree(void* dest, void* source)
+{
+	*(Tree*)dest = *(Tree*)source;	
+}
+
+void fusion_List_Tree(List listTree)
+{
+	while (listTree->cell->next != NULL)
+	{
+		switch (compar_Tree(front_List(listTree), get_i_List(listTree, 1)))
+		{
+			//cas ou le premier arbre de la liste est de frequence inferieure au deuxième
+			case -1:
+			{
+				add_subTree((Tree*)(front_List(listTree)), *(Tree*)(get_i_List(listTree, 1)), false);
+				break;
+			}
+			
+			//si les arbres sont de frequence egale, on cree un nouvel arbre dont la frequence est la somme
+			case 0:
+			{
+				concatenate_Tree((Tree*)(get_i_List(listTree, 1)), (*(Tree*)(front_List(listTree))));
+				pop_front_List(listTree);
+				break;
+			}		
+		}
+	}
+}

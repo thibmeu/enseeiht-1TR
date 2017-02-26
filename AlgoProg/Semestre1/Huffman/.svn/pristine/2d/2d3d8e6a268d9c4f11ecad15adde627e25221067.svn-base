@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "compress.h"
+
+#define CHAR_MAX 256
+
+void init_freq(Couple* couples)
+{
+	for (int iCouple = 0; iCouple < CHAR_MAX; iCouple++)
+		init_Couple(&couples[iCouple], 0, (char) iCouple);
+}
+
+int frequence(FILE* fichier, Couple* couples)
+{
+	char caract = 'a';
+	int sizeFile = 0;
+	while (!feof(fichier))
+	{
+		caract = fgetc(fichier);
+		couples[(int)caract].freq += 1;
+		sizeFile++;
+	}
+	/////IL FAUT REPLACER LE FICHIER EN DEBUT DE LECTURE
+	return sizeFile;
+}
+
+void tri_Couple(Couple* couples)
+{
+	qsort(couples, CHAR_MAX, sizeof(Couple), compar_Couple);
+}
+
+void add_couple_List_Tree(List list, Couple couple)
+//Ajoute un couple a une liste d'arbre
+{
+	Tree treeTampon;
+	init_Tree(&treeTampon);
+	couple_to_Tree(&treeTampon, couple);
+	puts("Je suis TreeTampon");
+	print_Tree(treeTampon);
+	add_List(list, &treeTampon);
+	print_Tree(*(Tree*)back_List(list));
+}
+
+int build_Tree(Couple* couples, Tree* tree)
+{
+	//on passe toutes les cellules ou la frequence est nulle
+	int iCouple = 0;
+	while (couples[iCouple].freq == 0)
+		iCouple++;
+	int sizeTree = CHAR_MAX - iCouple;
+	
+	//on transforme la liste de cellules en liste d'arbres a un noeud
+	List list;
+	init_List(&list, sizeof(Tree), init_void_Tree, destruct_Tree, equal_Tree, compar_Tree);
+	for(; iCouple < CHAR_MAX; iCouple++)
+		add_couple_List_Tree(list, couples[iCouple]);
+	
+	fusion_List_Tree(list);
+	
+	//On recupere le seul arbre de la liste qui est l'arbre fusionne
+	*tree = front_List(list);
+	
+	//list->cell = list->cell->next;
+	//destroy_List(&list);
+	
+	//print_Tree(*tree);
+	return sizeTree;
+}
+
+void description_Tree(Tree tree, Binary description, Value* caracs, int iCarac)
+{
+	if (tree != NULL)
+	{
+		if (!is_leaf_Tree(tree))
+		{
+			caracs[iCarac] = tree->couple.value;
+			iCarac ++;
+		}
+		
+		left_shift_Binary(description, 1); //ajouter un zero en fin de sequence binaire
+		description_Tree(tree->left, description, caracs, iCarac);
+		
+		////////ICI ON CONCATENNE NORMALEMENT...
+		left_shift_Binary(description, 1);
+		Binary unBinary = un_Binary();
+		or_Binary(&description, unBinary); //ajouteur un 1 en fin de sequence binaire
+		destruct_Binary(&unBinary);
+		
+		description_Tree(tree->left, description, caracs, iCarac);
+	}
+}
+
+void construct_table_caracts(Tree tree, Binary output[CHAR_MAX], Binary tampon_Binary){
+	if (is_leaf_Tree(tree))
+		output[(int) tree->couple.value] = tampon_Binary;
+	else
+	{
+		////////CE CODE EST DEJA DEUX LIGNES AU DESSUS ---> fonction
+		left_shift_Binary(tampon_Binary, 1); //ajouter un zero en fin de sequence binaire
+		construct_table_caracts(tree->left, output, tampon_Binary);
+		
+		Binary unBinary = un_Binary();
+		left_shift_Binary(tampon_Binary, 1);
+		or_Binary(&tampon_Binary, unBinary); //ajouteur un 1 en fin de sequence binaire
+		construct_table_caracts(tree->left, output, tampon_Binary);
+		destruct_Binary(&unBinary);
+	}
+}
+
+void write_forhead(FILE* output, int size_txt, int size_tree, Value* caracs)
+{
+	fprintf(output, "%d", size_txt);
+	fprintf(output, "%c", (char) size_tree);
+	for (int iChar = 0; iChar < size_tree; iChar++)
+		fprintf(output, "%c", caracs[iChar]);
+}
+
+void compress(FILE* input, FILE* output)
+///////  #TropLong #FonctionSSS #NomDeVariableDegueu #NoRage
+{	
+	Couple couples[CHAR_MAX];
+	init_freq(couples);
+	int sizeFile = frequence(input, couples);
+	tri_Couple(couples);
+	Tree tree;
+	init_Tree(&tree);
+	int sizeTree = build_Tree(couples, &tree);
+	/*
+	Binary descriptionTree = zero_Binary();
+	char tabCaracs[CHAR_MAX];
+	description_Tree(tree, descriptionTree, tabCaracs, 0);
+	
+	Binary* tabCaracsn = malloc(sizeTree*sizeof(Value));
+	Binary tamponBinary = zero_Binary();
+	construct_table_caracts(tree, tabCaracsn, tamponBinary);
+	
+	tamponBinary = zero_Binary();
+	
+	puts("put");
+	
+	write_forhead(output, sizeFile, sizeTree, tabCaracs);
+	do
+	{
+		char readCaractere;
+		fscanf(input, "%c", &readCaractere);
+		Binary binaryCaract;
+		init_Binary(&binaryCaract);
+		binaryCaract = tabCaracsn[(int)readCaractere];
+		concatenate_Binary(&tamponBinary, binaryCaract);
+		write_Binary(tamponBinary, output);
+	} while (!feof(input));
+	* */
+}

@@ -1,0 +1,6 @@
+> add x 1
+> value x
+1
+> print
+-->[ "x"=1 ]--E
+> end

@@ -1,0 +1,86 @@
+import static org.junit.Assert.*;
+
+import java.awt.Color;
+
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Tests permettant de vérifier les exigences et contraintes exprimées dans le
+ * sujet.
+ *
+ * @author	Thibault Meunier
+ * @version	1
+ */
+public class CreerRectangleTest {
+	// précision pour les comparaisons entre nombres réels
+	public final static double EPSILON = 0.001;
+	
+	private Point a, b, c, d;
+	
+	@Before public void setUp(){
+		a = new Point(0, 0);
+		b = new Point(2, 0);
+		c = new Point(2, 1);
+		d = new Point(0, 1);
+	}
+	
+	static void memesCoordonnees(Point p1, Point p2) {
+		assertEquals(p1.getX(), p2.getX(), EPSILON);
+		assertEquals(p1.getY(), p2.getY(), EPSILON);
+	}
+	
+	@Test public void testCreerRectangle() {
+		//Un rectangle quelconque
+		Polygone rectangle1 = Polygone.creerRectangle(a, c);
+		Polygone abcd = new Polygone(a, b, c, d);
+		assertEquals("Il manque des points au rectangle", rectangle1.getOrdre(), abcd.getOrdre());
+		assertEquals("Il manque des points au rectangle", rectangle1.getOrdre(), 4);
+		assertEquals("Les coordonnees ne sont pas valides", rectangle1.toString(), abcd.toString());
+		memesCoordonnees(rectangle1.getSommet(0), new Point(0, 0));
+		memesCoordonnees(rectangle1.getSommet(1), new Point(2, 0));
+		memesCoordonnees(rectangle1.getSommet(2), new Point(2, 1));
+		memesCoordonnees(rectangle1.getSommet(3), new Point(0, 1));
+		
+		memesCoordonnees(new Point(0, 0), a);
+		memesCoordonnees(new Point(2, 0), b);
+		memesCoordonnees(new Point(2, 1), c);
+		memesCoordonnees(new Point(0, 1), d);
+		
+		assertEquals(rectangle1.getSommet(0).getCouleur(), Color.green);
+		rectangle1.getSommet(0).setCouleur(Color.pink);
+		assertEquals(rectangle1.getSommet(0).getCouleur(), Color.green);
+		//assertEquals(rectangle1.getSommet(1).getCouleur(), Color.blue);
+		a.translater(1, 1);
+		memesCoordonnees(new Point(0, 0), rectangle1.getSommet(0));
+		a.translater(-1, -1);
+		
+		assertTrue("Probleme de sens", rectangle1.getSommet(0).getX() < rectangle1.getSommet(1).getX());
+		assertTrue("Probleme de sens", rectangle1.getSommet(1).getY() < rectangle1.getSommet(2).getY());
+		assertTrue("Probleme de sens", rectangle1.getSommet(2).getX() > rectangle1.getSommet(3).getX());
+		assertTrue("Probleme de sens", rectangle1.getSommet(3).getY() > rectangle1.getSommet(0).getY());
+		
+		//Un rectangle autre ordre
+		Polygone rectangle3 = Polygone.creerRectangle(c, a);
+		assertEquals("Les coordonnees ne sont pas valides", rectangle3.toString(), abcd.toString());
+		
+		//Un rectangle autre ordre
+		Polygone rectangle4 = Polygone.creerRectangle(d, b);
+		assertEquals("Les coordonnees ne sont pas valides", rectangle4.toString(), abcd.toString());
+		
+		//Un rectangle autre ordre
+		Polygone rectangle5 = Polygone.creerRectangle(d, b);
+		assertEquals("Les coordonnees ne sont pas valides", rectangle4.toString(), abcd.toString());
+		
+		//Un rectangle autre ordre
+		//Polygone rectangle6 = Polygone.creerRectangle(null, b);
+		
+		//Un rectangle autre ordre
+		//Polygone rectangle7 = Polygone.creerRectangle(d, null);
+	}
+	
+	public static void main(String[] args) {
+		org.junit.runner.JUnitCore.main(CreerRectangleTest.class.getName());
+	}
+	
+}

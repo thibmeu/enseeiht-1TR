@@ -1,0 +1,85 @@
+#include "tests-sda.c"
+#define INIT init_SDA(&sda)
+
+void unit_fixture_init_SDA()
+{
+	test_fixture_start();
+	run_test(unit_init_SDA);
+	test_fixture_end();
+}
+
+void unit_fixture_empty()
+{
+	test_fixture_start();
+	run_test(unit_empty);
+	test_fixture_end();
+}
+
+void unit_fixture_add()
+{
+	test_fixture_start();
+	run_test(unit_add);
+	test_fixture_end();
+}
+
+void unit_fixture_delete()
+{
+	test_fixture_start();
+	run_test(unit_delete);
+	test_fixture_end();
+}
+
+void unit_fixture_has_key()
+{
+	test_fixture_start();
+	run_test(unit_has_key);
+	test_fixture_end();
+}
+
+void unit_fixture_getValue()
+{
+	test_fixture_start();
+	run_test(unit_getValue);
+	test_fixture_end();
+}
+
+void unit_fixture_clear()
+{
+	test_fixture_start();
+	run_test(unit_clear);
+	test_fixture_end();
+}
+
+void unit_fixture_destroy()
+{
+	test_fixture_start();
+	run_test(unit_destroy);
+	test_fixture_end();
+}
+
+void unit_print_SDA();
+{
+	test_fixture_start();
+	run_test(unit_print_SDA);
+	test_fixture_end();
+}
+
+
+void all_unit_SDA()
+{
+	unit_fixture_init_SDA();
+	unit_fixture_empty();
+	unit_fixture_add();
+	unit_fixture_delete();
+	unit_fixture_has_key();
+	unit_fixture_getValue();
+	unit_fixture_clear();
+	unit_fixture_destroy();
+	unit_print_SDA();
+}
+
+int main()
+{
+	run_tests(all_unit_LCA());
+	return 0;
+}

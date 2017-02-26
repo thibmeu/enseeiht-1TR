@@ -1,0 +1,945 @@
+/*********************************************************************
+ **  Auteurs  : Thibault Meunier, Hugo Montal
+ **  Objectif : Jouer au jeu du Memory
+ *********************************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <time.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+#define NB_CARTES 52
+#define NB_ENSEIGNES 4
+#define NB_VALEURS 13
+#define NB_COULEURS NB_ENSEIGNES/2
+#define NB_ETAPES 2
+#define NB_CARTES_ETOURDI 10
+#define TAILLE_LIGNE 3
+#define TAILLE_COLONNE 6
+#define DECALAGE 1
+#define MAX_NOM 10
+#define MIN_JOUEURS 2
+#define MAX_JOUEURS 1000
+#define NB_LIGNES NB_ENSEIGNES
+#define NB_COLONNES NB_VALEURS
+#define NB_LIGNES_AFFICHAGE NB_LIGNES*TAILLE_LIGNE+1 + 2*DECALAGE
+#define NB_COLONNES_AFFICHAGE NB_COLONNES*TAILLE_COLONNE+1 + 2*DECALAGE
+#define NB_ETATS_CARTE 3
+#define NB_IA 3
+#define HAUTEUR_CARTE 2
+#define LARGEUR_CARTE 3
+
+const char txtEnseigne[NB_ENSEIGNES][TAILLE_LIGNE] = {"PIQ", "COE", "CAR", "TFL"};
+const char txtValeur[NB_VALEURS][TAILLE_LIGNE] = {"AS ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", "10 ", "VLT", "DME", "ROI"};
+
+enum Enseigne {Pique, Coeur, Carreau, Trefle};
+typedef enum Enseigne Enseigne;
+enum Valeur {As, Deux, Trois, Quatre, Cinq, Six, Sept, Huit, Neuf, Dix, Valet, Dame, Roi};
+typedef enum Valeur Valeur;
+enum Difficulte{NAIF, EXPERT, ETOURDI};
+typedef enum Difficulte Difficulte;
+enum EtatCarte {VISIBLE, CACHEE, RETIREE};
+typedef enum EtatCarte EtatCarte;
+
+const char affEtatCarte[NB_ETATS_CARTE][TAILLE_LIGNE][TAILLE_COLONNE] =
+{{"???", "???"},	//VISIBLE --> INCONNU
+    {"~~~", "~~~"},	//CACHEE
+    {"   ", "   "}};	// RETIREE
+
+
+// Debut dela classe Position
+
+struct Position
+{
+    int ligne;
+    int colonne;
+};
+typedef struct Position Position;
+
+void init_Position(int ligne, int colonne, Position* this);
+
+const Position memoireVide = {-1, -1};
+
+void affichage_Position(Position position);
+
+bool isEgalesPositions(Position a, Position b);
+
+void setPosition(Position b, Position* this);
+// Fin de la classe position
+
+//Debut de la classe Carte
+struct Carte
+{
+    Enseigne enseigne;
+    Valeur valeur;
+};
+typedef struct Carte Carte;
+
+void init_Carte(Enseigne enseigne, Valeur valeur, Carte* this);
+
+bool couleurCarte(Carte c);
+
+bool isEgalesCartes(Carte c1, Carte c2);
+
+bool isPaireCarte(Carte c1, Carte c2);
+// Fin de la classe Carte
+
+//Debut de la classe Jeu52
+typedef Carte Jeu52 [NB_CARTES];
+
+void init_Jeu52(Jeu52 jeu);
+
+void permuter(Jeu52 jeu);
+
+void battre(Jeu52 jeu);
+
+void calculPosCartes(Jeu52 jeu, int posCarte[NB_CARTES]);
+
+void affichage(Jeu52 jeu);
+
+bool bienBattu(Jeu52 jeu);
+
+// Fin de la classe Jeu52
+
+//Debut de la classe CarteReele
+struct CarteReele
+{
+    Carte carte;
+    EtatCarte etat;
+};
+typedef struct CarteReele CarteReele;
+
+void init_CarteReele(Carte carte, EtatCarte etat, CarteReele* this);
+//Fin de la classe CarteReele
+
+//Debut de la classe Tapis
+typedef CarteReele Tapis [NB_ENSEIGNES][NB_VALEURS];
+
+void init_Tapis(Tapis tapis);
+//Fin de la classe Tapis
+
+//Debut de la classe Joueur
+struct Joueur
+{
+    char nom[MAX_NOM];
+    bool humain;
+    Difficulte difficulte;//Si le joueur est virtuel vaut NULL
+    Position memoire[NB_CARTES]; //initialiser a {-1,-1} == memoire vide
+    int score;
+};
+typedef struct Joueur Joueur;
+
+void init_Joueur(char nom[MAX_NOM], bool humain, Difficulte difficulte, Position memoire[NB_CARTES], int score, Joueur *joueur);
+//Fin de la classe Joueur
+
+void trueStrCpy(char str1[], const char str2[], int taille);
+
+void clear_stdin();
+
+void clear();
+
+void pause();
+
+CarteReele tapisPosition(Tapis tapis, Position position);
+
+bool isDansTapis(Position position);
+
+void stockageMemoireJoueur(Tapis tapis, Position memoire[NB_CARTES], Position carte, Difficulte difficulte);
+
+void affichage_memoire(Position memoire[NB_CARTES]);
+
+void memoriseCarte(Tapis tapis, Joueur* joueur, Position carteRetournee[NB_ETAPES]);
+
+void affichageTapis(char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE]);
+
+void init_affTapis(char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE]);
+
+void init_tab_joueur(Joueur joueur[MAX_JOUEURS], int* nbJoueurs);
+
+void initialisation(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur[MAX_JOUEURS], int* nbJoueurs);
+
+void afficheJoueur(Joueur joueur, int iClassementJoueur);
+
+int compareScore(const void* a, const void* b);
+
+void affichageVainqueurs(Joueur joueur[MAX_JOUEURS], int nbJoueurs);
+
+void placeCarte(char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], char affCarte[HAUTEUR_CARTE][LARGEUR_CARTE], Position position);
+
+void changementCarte(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Position position, EtatCarte etat);
+
+void lecturePosition(Position* position);
+
+void cacheMemoire(Tapis tapis, Position memoire[NB_CARTES]);
+
+void ia_memoire(Tapis tapis, int nbCartesRestantes, Position memoire[NB_CARTES], Position cartePrec, Position* position);
+
+void carteAleatoireCachee(Tapis tapis, int iCarte, Position* position);
+
+void ia_naif(Tapis tapis,int nbCartesRestantes, Position* position);
+
+void saisieCarte(Tapis tapis, Joueur joueur, int nbCartesRestantes, Position carteRetournee[NB_ETAPES], int iEtape);
+
+void choixDesCartes(Tapis tapis, Position carteRetournee[NB_ETAPES], char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur, int nbCartesRestantes);
+
+void tourJoueur(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur[MAX_JOUEURS], int nbJoueurs, int *iJoueur, int* nbCartesRestantes);
+
+bool testTapis(int nbCartesRestantes);
+
+void partie(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur[MAX_JOUEURS], int nbJoueurs);
+
+void affichage_tableau_debug(Tapis tapis);
+
+void jouerMemory();
+
+
+
+
+// Debut dela classe Position
+void init_Position(int ligne, int colonne, Position* this)
+{
+    this->ligne = ligne;
+    this->colonne = colonne;
+}
+
+void affichage_Position(Position position)
+{
+	printf("ligne : %d - colonne : %d\n", position.ligne, position.colonne);
+}
+
+bool isEgalesPositions(Position a, Position b)
+{
+    return ((a.ligne == b.ligne) && (a.colonne == b.colonne));
+}
+
+void setPosition(Position b, Position* this)
+{
+    this->ligne = b.ligne;
+    this->colonne = b.colonne;
+}
+// Fin de la classe position
+
+//Debut de la classe Carte
+void init_Carte(Enseigne enseigne, Valeur valeur, Carte* this)
+{
+    this->enseigne = enseigne;
+    this->valeur = valeur;
+};
+
+bool couleurCarte(Carte c) //si true --> rouge
+{
+    return (((c.enseigne+1)/2)%2 == 1);
+}
+
+bool isEgalesCartes(Carte c1, Carte c2)
+{
+    return ((c1.enseigne == c2.enseigne) && (c1.valeur == c2.valeur));
+}
+
+bool isPaireCarte(Carte c1, Carte c2)
+{
+    return (couleurCarte(c1) == couleurCarte(c2)) && (c1.valeur == c2.valeur);
+}
+// Fin de la classe Carte
+
+//Debut de la classe Jeu52
+void init_Jeu52(Jeu52 jeu)
+{
+    int iEnseigne, iValeur;
+    for(iEnseigne = 0; iEnseigne < NB_ENSEIGNES; iEnseigne++)
+        for(iValeur = 0; iValeur < NB_VALEURS; iValeur++)
+        {
+            Carte iCarte = {iEnseigne, iValeur};
+            *(jeu+iEnseigne*NB_VALEURS+iValeur) = iCarte;
+        }
+}
+
+void permuter(Jeu52 jeu)
+{
+    int iCarte1 = rand()%NB_CARTES;
+    int iCarte2 = rand()%NB_CARTES;
+    Carte temp = *(jeu+iCarte1);
+    *(jeu+iCarte1) = *(jeu+iCarte2);
+    *(jeu+iCarte2) = temp;
+}
+
+void battre(Jeu52 jeu)
+{
+    const int NB_BATTUES = 10*1000;
+    int iBattue;
+    for(iBattue = 0; iBattue < NB_BATTUES; iBattue++)
+        permuter(jeu);
+}
+
+void calculPosCartes(Jeu52 jeu, int posCarte[NB_CARTES])
+{
+    int iCarte;
+    for(iCarte = 0; iCarte < NB_CARTES; iCarte++)
+    {
+        int iEnseigne = (*(jeu+iCarte)).enseigne;
+        int iValeur = (*(jeu+iCarte)).valeur;
+        posCarte[iEnseigne*NB_VALEURS+iValeur] = iCarte;
+    }
+
+}
+
+void affichage(Jeu52 jeu)
+{
+    int posCarte[NB_CARTES], iCarte;
+    calculPosCartes(jeu, posCarte);
+    for(iCarte = 0; iCarte < NB_CARTES; iCarte++)
+        printf("%d ", posCarte[iCarte]);
+    printf("\n");
+}
+
+bool bienBattu(Jeu52 jeu)
+{
+    int posCarte[NB_CARTES], iCarte;
+    calculPosCartes(jeu, posCarte);
+    for(iCarte = 0; iCarte < NB_CARTES-1; iCarte++)
+        if ((posCarte[iCarte]+1 == posCarte[iCarte+1]) || posCarte[iCarte] < 0 || posCarte[iCarte] >= NB_CARTES)
+            return false;
+    return (posCarte[NB_CARTES-1] < NB_CARTES && posCarte[NB_CARTES-1] >= 0);
+}
+
+// Fin de la classe Jeu52
+
+//Debut de la classe CarteReele
+void init_CarteReele(Carte carte, EtatCarte etat, CarteReele* this)
+{
+    init_Carte(carte.enseigne, carte.valeur, &this->carte);
+    this->etat = etat;
+}
+//Fin de la classe CarteReele
+
+//Debut de la classe Tapis
+void init_Tapis(Tapis tapis)
+{
+    int iEnseigne, iValeur;
+    Jeu52 jeu;
+    init_Jeu52(jeu);
+    battre(jeu);
+    for(iEnseigne = 0; iEnseigne < NB_ENSEIGNES; iEnseigne++)
+        for(iValeur = 0; iValeur < NB_VALEURS; iValeur++)
+            init_CarteReele(jeu[NB_VALEURS*iEnseigne+iValeur], CACHEE, &tapis[iEnseigne][iValeur]);
+}
+//Fin de la classe Tapis
+
+//Debut de la classe Joueur
+void init_Joueur(char nom[MAX_NOM], bool humain, Difficulte difficulte, Position memoire[NB_CARTES], int score, Joueur *joueur)
+{
+    int iChar, iPosition;
+    for (iChar = 0; iChar < MAX_NOM; iChar++)
+        joueur->nom[iChar] = nom[iChar];
+    joueur->humain = humain;
+    joueur->difficulte = difficulte;
+    for (iPosition = 0; iPosition < NB_CARTES; iPosition++)
+        joueur->memoire[iPosition] = memoire[iPosition];
+    joueur->score = score;
+}
+//Fin de la classe Joueur
+
+void trueStrCpy(char str1[], const char str2[], int taille)
+{
+    int iChar;
+    for(iChar = 0; iChar < taille && str2[iChar] != '\0'; iChar++)
+        str1[iChar] = str2[iChar];
+}
+
+void clear_stdin()
+{
+    //rewind(stdin);
+    int c;
+	while ((c = getchar()) != '\n' && c != EOF);
+//	system("cls");
+}
+
+
+void clear()
+{
+	system("clear"); //Linux
+//	system("cls");  //Windows
+}
+
+void pause()
+{
+	getchar();
+//	system("pause"); //windows
+}
+
+CarteReele tapisPosition(Tapis tapis, Position position)
+{
+    return tapis[position.ligne][position.colonne];
+}
+
+bool isDansTapis(Position position)
+{
+	int ligne = position.ligne;
+	int colonne = position.colonne;
+	return (ligne >= 0 && ligne < NB_LIGNES) && (colonne >= 0 && colonne < NB_COLONNES);
+}
+
+void stockageMemoireJoueur(Tapis tapis, Position memoire[NB_CARTES], Position carte, Difficulte difficulte)
+{
+    int iMemoire = 0;
+    //si on l'a deja vu, on ne stocke rien
+    while (iMemoire < NB_CARTES && !isEgalesPositions(memoire[iMemoire], memoireVide))
+    {
+        if (isEgalesCartes(tapisPosition(tapis, memoire[iMemoire]).carte, tapisPosition(tapis, carte).carte))
+            return;
+        iMemoire++;
+    }
+
+    printf("Stockage : %d\n", iMemoire);
+
+    switch (difficulte)
+    {
+        case NAIF:
+            break;
+        case EXPERT:
+        {
+            if (iMemoire < NB_CARTES)
+                setPosition(carte, &memoire[iMemoire]);
+            break;
+        }
+        case ETOURDI:
+        {
+            if (iMemoire < NB_CARTES_ETOURDI)
+                setPosition(carte, &memoire[iMemoire]);
+            else if (iMemoire < NB_CARTES)
+            {
+                iMemoire = rand()%NB_CARTES_ETOURDI; //on remplace une carte au hasard dans la memoire
+                setPosition(carte, &memoire[iMemoire]);
+            }
+            break;
+        }
+    }
+}
+
+void affichage_memoire(Position memoire[NB_CARTES])
+{
+	for(int iCase = 0; iCase < NB_CARTES; iCase++)
+		affichage_Position(memoire[iCase]);
+}
+
+void memoriseCarte(Tapis tapis, Joueur* joueur, Position carteRetournee[NB_ETAPES])  //a completer
+{
+    if (!joueur->humain)
+        switch (joueur->difficulte)
+        {
+            case NAIF:
+                break;
+            case EXPERT: case ETOURDI:
+            {
+                for(int iCarte = 0; iCarte < NB_ETAPES; iCarte++)
+                    stockageMemoireJoueur(tapis, joueur->memoire, carteRetournee[iCarte], joueur->difficulte);
+                break;
+            }
+        }
+}
+
+void affichageTapis(char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE])
+{
+    for(int iLigne = 0; iLigne < NB_LIGNES_AFFICHAGE; iLigne++)
+    {
+        for (int iColonne = 0; iColonne < NB_COLONNES_AFFICHAGE; iColonne++)
+            printf("%c", affTapis[iLigne][iColonne]);
+        printf("\n");
+    }
+}
+
+void init_affTapis(char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE])
+{
+    //On met toutes les cartes faces retournees
+    for(int iLigne = 0; iLigne < NB_LIGNES_AFFICHAGE; iLigne++)
+    {
+        if(iLigne%TAILLE_LIGNE == 1)
+        {
+            for(int iColonne = 0; iColonne < NB_COLONNES_AFFICHAGE; iColonne++)
+            {
+                if (iColonne == 0 || iColonne == NB_COLONNES_AFFICHAGE-1)
+                    affTapis[iLigne][iColonne] = ' ';
+                else
+                    affTapis[iLigne][iColonne] = (iColonne%TAILLE_COLONNE==1) ? '+' : '-';
+            }
+        }
+        else if (iLigne == 0 || iLigne == NB_LIGNES_AFFICHAGE-1)
+            for(int iColonne = 0; iColonne < NB_COLONNES_AFFICHAGE; iColonne++)
+                affTapis[iLigne][iColonne] = ' ';
+        else
+        {
+            for(int iColonne = 0; iColonne < NB_COLONNES_AFFICHAGE; iColonne+=3)
+            {
+                if ((iColonne/3)%2 == 0)
+                    strcpy((*(affTapis+iLigne)+iColonne), " | ");
+                else
+                    strcpy((*(affTapis+iLigne)+iColonne), "~~~");
+            }
+            affTapis[iLigne][NB_COLONNES_AFFICHAGE-DECALAGE-1] = '|';
+        }
+    }
+
+    //On pose maintenant les numeros des lignes ...
+    for(int iLigne = TAILLE_LIGNE; iLigne < NB_LIGNES_AFFICHAGE; iLigne+=TAILLE_LIGNE)
+    {
+        affTapis[iLigne][0] = '0'+iLigne/TAILLE_LIGNE;
+        affTapis[iLigne][NB_COLONNES_AFFICHAGE-1] = '0'+iLigne/TAILLE_LIGNE;
+    }
+    //... puis des colonnes
+    for(int iColonne = 4; iColonne < NB_COLONNES_AFFICHAGE; iColonne+=TAILLE_COLONNE)
+    {
+        affTapis[0][iColonne] = 'A'+iColonne/TAILLE_COLONNE;
+        affTapis[NB_LIGNES_AFFICHAGE-1][iColonne] = 'A'+iColonne/TAILLE_COLONNE;
+    }
+}
+
+void init_tab_joueur(Joueur joueur[MAX_JOUEURS], int* nbJoueurs)
+{
+    *nbJoueurs = -1;
+    do
+    {
+        switch (*nbJoueurs)
+        {
+
+            case -1:
+            {
+                printf("A combien voulez vous jouer ? (entre %d et %d)\n", MIN_JOUEURS, MAX_JOUEURS);
+                scanf("%d", nbJoueurs);
+                break;
+            }
+            case 0:
+            {
+                printf("Il est impossible de jouer sans joueur\n");
+                *nbJoueurs = -1;
+                break;
+            }
+            case 1:
+            {
+                printf("Il est impossible de jouer seul\n");
+                *nbJoueurs = -1;
+                break;
+            }
+            default:
+            {
+                printf("Entrez un nombre de joueurs valide !\n");
+                *nbJoueurs = -1;
+            }
+        }
+    } while (*nbJoueurs < MIN_JOUEURS || *nbJoueurs > MAX_JOUEURS);
+
+    for(int iJoueur = 0; iJoueur < *nbJoueurs; iJoueur++)
+    {
+        printf("Configuration du joueur %d\n", iJoueur+1);
+
+        //on prend son nom
+        char nom[MAX_NOM];
+        int iLettre;
+        do
+        {
+            clear_stdin();
+             iLettre = 0;
+             printf("Entrez le nom du joueur (taille maximale : %d)\n", MAX_NOM);
+             do
+             {
+                 scanf("%c", &nom[iLettre]);
+                 printf("Char lu : %c\n", nom[iLettre]);
+                 iLettre++;
+             } while (iLettre < MAX_NOM && nom[iLettre-1] != '\n'); //on autorise les ' '
+         } while (iLettre >= MAX_NOM);
+         nom[iLettre-1] = '\0';
+        printf("%s\n", nom);
+
+        //on choisit si le joueur est humain
+        bool humain;
+        char isHumain = 0;
+        printf("Le joueur sera-t-il humain ? (o/n)\n");
+        do
+        {
+            if (isHumain != 0)
+            {
+                clear_stdin();
+                printf("Veuillez entrer 'o' ou 'n'\n");
+            }
+            scanf("%c", &isHumain);
+            printf("isHumain : %c\n", isHumain);
+        } while (!(isHumain == 'o' || isHumain == 'n'));
+        humain = (isHumain == 'o');
+
+        //si le joueur est un ordinateur, on entre sa difficulte
+        Difficulte difficulte = NAIF;
+        if (!humain)
+        {
+            int niveau = -1;
+            do
+            {
+                if (niveau != -1)
+                    printf("Merci de reessayer, ia selectionnee non valide\n");
+                printf("Entrer la difficulte de l'IA desiree (NAIF=0, EXPERT=1, ETOURDI=2)\n");
+                scanf("%d", &niveau);
+            } while (niveau < 0 || niveau >= NB_IA);
+            difficulte = niveau;
+        }
+
+        //on fixe sa memoire a vide
+        Position memoire[NB_CARTES];
+        int iCase;
+        for (iCase = 0; iCase < NB_CARTES; iCase++)
+            setPosition(memoireVide, &memoire[iCase]);
+
+        //score initialement nul
+        int score = 0;
+        init_Joueur(nom, humain, difficulte, memoire, score, &joueur[iJoueur]);
+    }
+}
+
+void initialisation(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur[MAX_JOUEURS], int* nbJoueurs)
+{
+	init_Tapis(tapis);
+	init_affTapis(affTapis);
+	init_tab_joueur(joueur, nbJoueurs);
+}
+
+void afficheJoueur(Joueur joueur, int iClassementJoueur)
+{
+    printf("|%10s|    %02d    |    %2d    |\n", joueur.nom, joueur.score, iClassementJoueur);
+}
+
+int compareScore(const void* a, const void* b)
+//si le joueur b a un score plus grand, il est classé avant le joueur a
+{
+    return ( (*(Joueur*)b).score - (*(Joueur*)a).score );
+}
+
+void affichageVainqueurs(Joueur joueur[MAX_JOUEURS], int nbJoueurs)
+{
+    qsort(joueur, nbJoueurs, sizeof(Joueur), compareScore);
+    printf("    Nom       Score    Classement\n");
+    int iClassement = 1;
+    for (int iJoueur =0; iJoueur < nbJoueurs; iJoueur++)
+    {
+        if(iJoueur != 0 && joueur[iJoueur].score != joueur[iJoueur-1].score)
+            iClassement++;
+        afficheJoueur(joueur[iJoueur], iClassement);
+    }
+        
+}
+
+void placeCarte(char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], char affCarte[HAUTEUR_CARTE][LARGEUR_CARTE], Position position)
+{
+    position.ligne = position.ligne*TAILLE_LIGNE + 2;
+    position.colonne = position.colonne*TAILLE_COLONNE + 3;
+    for (int iLigne = 0; iLigne < HAUTEUR_CARTE; iLigne++)
+        for (int iColonne = 0; iColonne < LARGEUR_CARTE; iColonne++)
+            affTapis[position.ligne+iLigne][position.colonne+iColonne] = affCarte[iLigne][iColonne];
+}
+
+void changementCarte(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Position position, EtatCarte etat)
+{
+    char affCarte[HAUTEUR_CARTE][LARGEUR_CARTE];  //Correspond à un emplacement de carte dans le tableau d'affichage
+    CarteReele carte = tapisPosition(tapis, position);
+    if (etat == VISIBLE)
+    {
+            trueStrCpy(affCarte[0], txtValeur[carte.carte.valeur], LARGEUR_CARTE);
+            trueStrCpy(affCarte[1], txtEnseigne[carte.carte.enseigne], LARGEUR_CARTE);
+	}
+	else
+		for (int iLigne = 0; iLigne < HAUTEUR_CARTE; iLigne++)
+			trueStrCpy(affCarte[iLigne], affEtatCarte[etat][iLigne], LARGEUR_CARTE);
+           
+    tapis[position.ligne][position.colonne].etat = etat;
+    placeCarte(affTapis, affCarte, position);
+}
+
+void lecturePosition(Position* position)
+{
+	char lettreColonne;
+	int testScan = 0;
+	int testLigneColonne = 0;
+	do
+	{
+        clear_stdin();
+		switch (testLigneColonne){
+			case 1:
+				printf("La colonne est correcte mais la ligne est incorrecte\n");
+				break;
+
+            case 2:
+				printf("La ligne est correcte mais la colonne est incorrecte\n");
+				break;
+
+            case 0:
+                break;
+
+			default:
+				printf("Merci de renseigner une position valide\n");
+		}
+
+        lettreColonne = 'z';
+        position->ligne = 0;
+        testLigneColonne = 0;
+
+		printf("Entrez la position (ex: 1A)\n");
+		testScan = scanf("%d%c", &(position->ligne), &lettreColonne); //on a recupere deux parametres
+        printf("Position lue : %d%c\n", position->ligne, lettreColonne);
+		position->colonne = (int)(toupper(lettreColonne))-'A';
+        position->ligne -= 1;
+/*		printf("Position colonne : %d\n", position->colonne);
+        printf("Position ligne : %d\n", position->ligne);
+        printf("Test scan : %d\n", testScan);*/
+        if(!(isDansTapis(*position)))
+        {
+			if (!((position->ligne >= 0) && (position->ligne < NB_LIGNES))) //si la ligne n'est pas ok
+				testLigneColonne += 1;
+            if (!((position->colonne >= 0) && (position->colonne < NB_COLONNES))) //si la colonne n'est pas ok
+				testLigneColonne += 2;
+		}
+
+	} while ((testScan != 2) || (testLigneColonne != 0));   //scanf() renvoie le nombre de parametres lus
+}
+
+
+void cacheMemoire(Tapis tapis, Position memoire[NB_CARTES])
+{
+    int iMemoire = 0;
+    while ((iMemoire < NB_CARTES) && (!(isEgalesPositions(memoire[iMemoire], memoireVide))))
+    {
+        Position position = memoire[iMemoire];
+        if (tapis[position.ligne][position.colonne].etat != RETIREE)
+            tapis[position.ligne][position.colonne].etat = CACHEE;
+        iMemoire++;
+    }
+}
+
+void ia_memoire(Tapis tapis, int nbCartesRestantes, Position memoire[NB_CARTES], Position cartePrec, Position* position)
+{
+    //~ _dejaVuCarte: Tableau de [NB_COULEURS][NB_VALEURS] Booleen initialises a 0
+    bool dejaVuCarte[NB_COULEURS][NB_VALEURS] = {{0},{0}};
+    //~ _Si il y a une carte precedente:
+    if (!isEgalesPositions(cartePrec, memoireVide) && isDansTapis(cartePrec))
+    {
+		affichage_Position(cartePrec);
+        Carte carte = tapisPosition(tapis, cartePrec).carte;
+        dejaVuCarte[couleurCarte(carte)][carte.valeur] = true;
+    }
+    //~ _dejaVuCarte[position carte precedente]
+    //~ _Tant qu'on n'a pas parcouru toutes les cartes en memoire et que la carte est toujours sur le tapis:
+    int iMemoire = 0;
+	
+    while ((iMemoire < NB_CARTES) && !(isEgalesPositions(memoire[iMemoire], memoireVide)))
+    {
+        printf("Position memoire : %d-%d\n", memoire[iMemoire].ligne, memoire[iMemoire].colonne);
+        CarteReele carte = tapisPosition(tapis, memoire[iMemoire]);
+        if (carte.etat == CACHEE)
+        {
+            carte.etat = VISIBLE;
+            if (dejaVuCarte[couleurCarte(carte.carte)][carte.carte.valeur])	//~ _Si On a deja vu la paire de la carte courante:
+            {
+                *position = memoire[iMemoire];				//~ _Renvoie la position de la carte courante
+                cacheMemoire(tapis, memoire);
+                pause();
+                return;
+            }
+            else
+            {
+                printf("Couleur : %d - Valeur : %d\n", couleurCarte(carte.carte), carte.carte.valeur);
+                dejaVuCarte[couleurCarte(carte.carte)][carte.carte.valeur] = true;	//~ _dejaVuCarte[position carte courante] <- 1
+            }
+        }
+        iMemoire++;
+    }
+    //~ On parcourt le tapis (gauche puis bas) pour trouver une carte cachee et non presente dans le tableau
+    
+    for(int iLigne = 0; iLigne < NB_LIGNES; iLigne++)
+        for(int iColonne = 0; iColonne < NB_COLONNES; iColonne++)
+            //si c'est pas retiree, visible, ou en memoire, tapis[iLigne][iColonne];
+        {
+            CarteReele carte = tapis[iLigne][iColonne];
+            if (carte.etat == CACHEE)
+            {
+                Position testPosition;
+                init_Position(iLigne, iColonne, &testPosition);
+                iMemoire = 0;
+                bool testMemoire = false;
+                while ((iMemoire < NB_CARTES) && !(isEgalesPositions(memoire[iMemoire], memoireVide)))
+                {
+                    if(isEgalesPositions(memoire[iMemoire], testPosition))
+                        testMemoire = true;
+					iMemoire++;
+                }
+                if(!testMemoire)
+                {
+                    position->ligne = iLigne;
+                    position->colonne = iColonne;
+                }
+            }
+        }
+    cacheMemoire(tapis, memoire);
+    pause();
+}
+
+void carteAleatoireCachee(Tapis tapis, int iCarte, Position* position)
+{
+    int iLigne, iColonne, nbCache=0;
+    for(iLigne=0; iLigne<NB_LIGNES; iLigne++)
+        for(iColonne=0; iColonne<NB_COLONNES; iColonne++)
+        {
+            CarteReele carte = tapis[iLigne][iColonne];
+            if (carte.etat == CACHEE)
+            {
+                nbCache++;
+                if(nbCache == iCarte)
+                {
+                    position->ligne = iLigne;
+                    position->colonne = iColonne;
+                }
+            }
+        }
+}
+
+void ia_naif(Tapis tapis,int nbCartesRestantes, Position* position)
+{
+    int iCarte = rand()%nbCartesRestantes + 1;
+    carteAleatoireCachee(tapis, iCarte, position);
+}
+
+void saisieCarte(Tapis tapis, Joueur joueur, int nbCartesRestantes, Position carteRetournee[NB_ETAPES], int iEtape)
+{
+    int test = 0;
+    Position cartePrec = memoireVide;
+    if (joueur.humain)
+    {
+        do
+        {
+            clear_stdin();
+            if(test == 1)
+                printf("La carte n'est plus dans le tapis ou est deja retournee\n");
+            lecturePosition(&carteRetournee[iEtape]);
+            test = 1;
+        } while(tapisPosition(tapis, carteRetournee[iEtape]).etat != CACHEE);
+    }
+    else
+    {
+        switch (joueur.difficulte) {
+            case NAIF:
+            {
+                ia_naif(tapis, nbCartesRestantes, &carteRetournee[iEtape]);
+                break;
+            }
+            case EXPERT: case ETOURDI:
+                if(iEtape==1)
+                    cartePrec = carteRetournee[0];
+                ia_memoire(tapis, nbCartesRestantes, joueur.memoire, cartePrec, &carteRetournee[iEtape]);
+ //               carteRetournee[iEtape].ligne = 3;
+ //       carteRetournee[iEtape].colonne = 12;
+                break;
+        }
+    }
+}
+
+void choixDesCartes(Tapis tapis, Position carteRetournee[NB_ETAPES], char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur, int nbCartesRestantes)
+{
+    int iEtape;
+    carteRetournee[0] = memoireVide;
+    for(iEtape=0; iEtape<NB_ETAPES; iEtape++)
+	{
+		printf("nom : %s\n", joueur.nom);
+        if(joueur.humain)
+            affichageTapis(affTapis);
+		saisieCarte(tapis, joueur, nbCartesRestantes, carteRetournee, iEtape);
+		changementCarte(tapis, affTapis, carteRetournee[iEtape], VISIBLE);
+		clear();
+	}
+}
+
+void tourJoueur(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur[MAX_JOUEURS], int nbJoueurs, int *iJoueur, int* nbCartesRestantes)
+{
+    Position carteRetournee[NB_ETAPES];
+	choixDesCartes(tapis, carteRetournee, affTapis, joueur[*iJoueur], *nbCartesRestantes);
+	printf("Le joueur %s \n", joueur[*iJoueur].nom);
+	affichageTapis(affTapis);
+	printf("Appuyer sur Entrée une fois que vous avez mémorisé les cartes\n");
+    pause();
+    for (int jJoueur = 0; jJoueur < nbJoueurs; jJoueur++)   //Tous les joueurs memorisent la carte chacun à leur tour
+		memoriseCarte(tapis, &joueur[jJoueur], carteRetournee);
+
+	Carte carte1 = tapis[carteRetournee[0].ligne][carteRetournee[0].colonne].carte;
+	Carte carte2 = tapis[carteRetournee[1].ligne][carteRetournee[1].colonne].carte;
+	if (isPaireCarte(carte1, carte2))
+	{
+		for(int iEtape = 0; iEtape < NB_ETAPES; iEtape++)
+			changementCarte(tapis, affTapis, carteRetournee[iEtape], RETIREE); //On retire les deux cartes
+		joueur[*iJoueur].score += 1;
+		*nbCartesRestantes -= 2;
+		// Retirer carte memoire !!!!
+		*iJoueur -= 1;  //On décrémente l'identificateur du joueur en cour de tel sorte que le joueur suivant a jouer soit lui même
+	}
+	else
+	{
+		for(int iEtape = 0; iEtape<NB_ETAPES; iEtape++)
+			changementCarte(tapis, affTapis, carteRetournee[iEtape], CACHEE);
+	}
+	clear();
+}
+
+bool testTapis(int nbCartesRestantes) //Test si le tapis est vide
+{
+    return (!(nbCartesRestantes == 0));
+}
+
+void partie(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur[MAX_JOUEURS], int nbJoueurs)
+{
+    int iJoueur = rand()%nbJoueurs;
+    int nbCartesRestantes = NB_CARTES;
+    while (testTapis(nbCartesRestantes))
+    {
+        tourJoueur(tapis, affTapis, joueur, nbJoueurs, &iJoueur, &nbCartesRestantes);
+        iJoueur = (iJoueur + 1)%nbJoueurs;
+    }
+}
+
+void affichage_tableau_debug(Tapis tapis)
+{
+    int iLigne, iColonne;
+    char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE];
+    init_affTapis(affTapis);
+    for(iLigne = 0; iLigne < NB_LIGNES; iLigne++)
+        for(iColonne = 0; iColonne < NB_COLONNES; iColonne++)
+        {
+            Position position;
+            init_Position(iLigne, iColonne, &position);
+            CarteReele* carte = &tapis[iLigne][iColonne];
+            EtatCarte etat = carte-> etat;
+            changementCarte(tapis, affTapis, position, VISIBLE);
+            carte->etat = etat; //changementCarte modifie egalement l'etat, donc on le sauvegarde
+        }
+	for(iLigne = 0; iLigne < NB_LIGNES_AFFICHAGE; iLigne++)
+	{
+		for(iColonne = 0; iColonne < NB_COLONNES_AFFICHAGE; iColonne++)
+			printf("%c", affTapis[iLigne][iColonne]);
+		printf("\n");
+	}
+}
+
+void jouerMemory()
+{
+	//_Mise en place du jeu
+	Tapis tapis;
+	char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE];
+	Joueur joueur[MAX_JOUEURS];
+	int nbJoueurs;
+
+	initialisation(tapis, affTapis, joueur, &nbJoueurs);
+	clear();
+	affichage_tableau_debug(tapis);
+	partie(tapis, affTapis, joueur, nbJoueurs);
+	affichageVainqueurs(joueur, nbJoueurs);
+}
+
+int main()
+{
+	srand(time(NULL));
+    jouerMemory();
+
+    return EXIT_SUCCESS;
+}

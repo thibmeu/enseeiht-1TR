@@ -1,0 +1,14 @@
+#include "list.h"
+#include <stdio.h>
+#include <assert.h>
+
+void tests()
+{
+	;
+}
+
+int main(int argc, char** argv)
+{
+	tests();
+	return 0;
+}

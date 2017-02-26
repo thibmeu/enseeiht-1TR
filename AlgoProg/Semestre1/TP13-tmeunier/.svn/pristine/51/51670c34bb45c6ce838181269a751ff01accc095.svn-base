@@ -1,0 +1,18 @@
+/*******************************************************************************
+ *  Auteur  : Xavier CRÉGUT <nom@n7.fr>
+ *  Objectif :
+ *	Spécification d'une SDA, structure de données associative
+ ******************************************************************************/
+
+#ifndef SDA__H
+#define SDA__H
+
+#include <stdbool.h>
+#include "types.h"
+
+#include "sda-specifique.h"
+
+// TODO: Donner la spécification des sous-programmes dont la spécification est la même
+// pour LCA et TH.
+
+#endif

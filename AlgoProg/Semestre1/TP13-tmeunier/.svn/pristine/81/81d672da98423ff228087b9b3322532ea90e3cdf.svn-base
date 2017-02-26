@@ -1,0 +1,11 @@
+// TODO: Donner la définition du type TH (et autres types nécessaires).
+#include "types.h"
+#include "lca-specifique.h"
+
+typedef LCA TH[];
+
+// TODO: Donner la spécification des sous-programmes dont la signature est
+// spécifique à TH.
+
+//1. Initialiser une SDA. La SDA ainsi initialisee est vide.
+void init_TH(TH* this);

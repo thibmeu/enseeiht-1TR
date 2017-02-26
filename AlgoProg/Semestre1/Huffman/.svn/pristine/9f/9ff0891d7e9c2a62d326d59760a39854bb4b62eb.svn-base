@@ -1,0 +1,124 @@
+#ifndef BINARY_H
+#define BINARY_H
+
+#include <stdio.h>
+#include <stdbool.h>
+#include "byte.h"
+#include "list.h"
+
+struct Binary
+{
+	List byte;		//Le debut de la liste correspond aux bits de poid fort
+	size_t size;	//Taille en bit, le bit de poid fort etant 1 (sauf si binaire == 0)
+};
+typedef struct Binary* Binary;
+
+void init_Binary(Binary* binary);
+/*
+ * Procedure init_Binary(binary: Binaire out)
+ * 
+ * Initialise binary comme un Binaire
+ * 
+ * Necessite:
+ * binary un pointeur valide
+ * 
+ * Assure:
+ * binary->byte : liste vide initialisee
+ * binary->size = 0
+ */
+
+void init_fromByte_Binary(Binary* binary, Byte* byte, size_t size);
+/*
+ * Procedure init_fromByte_Binary(binary: Binaire out, byte: Tableau de Byte in, size : Entier non signe in)
+ * 
+ * Initialise binary comme un Binaire a partir d'un tableau de bits
+ * 
+ * Necessite:
+ * binary un pointeur valide
+ * byte de taille inferieure a (size/BITSPERBYTE)+1
+ * 
+ * Assure:
+ * byte et size_t non modifiee
+ * binary->byte : liste contenant les elements de byte initialisee
+ * binary->size adaptee au nombre de bits du binaire
+ */
+
+void destruct_Binary(Binary* binary);
+/*
+ * Procedure destruct_Binary(binary: Binaire out)
+ * 
+ * Libere la memoire prise par un binaire
+ * 
+ * Necessite:
+ * binary un pointeur valide
+ * 
+ * Assure:
+ * *binary libere et valant NULL
+ */
+
+void swap_Binary(Binary a, Binary b);
+/*
+ * Procedure swap_Binary(a: Binaire in, b: Binaire in)
+ * 
+ * Echange la valeur de deux binaires
+ * 
+ * Necessite:
+ * a et b des binaires valides
+ * 
+ * Assure:
+ * a_nouveau = b_ancien
+ * b_nouveau = a_ancien
+ */
+
+void concatenate_Binary(Binary* dest, Binary source);
+/*
+ * Procedure concatenate_Binary(dest: Binaire in/out, source: Binaire in)
+ * 
+ * Mets source a la fin de dest
+ * 
+ * Necessite:
+ * source et *dest des binaires valides
+ * 
+ * Assure:
+ * Les bits de source sont places a la fin *dest
+ */
+
+void add_zero_Binary(Binary binary);
+
+void add_one_Binary(Binary binary);
+
+void write_Binary(Binary binary, FILE* file);	//Non written bits are let inside binary
+
+int size_in_Byte(Binary binary);
+
+void fit_size_Binary(Binary binary);
+
+Byte front_Byte(Binary binary);
+
+Binary front_Binary(Binary binary);
+
+void pop_front_Byte(Binary binary);
+
+void pop_front_Binary(Binary binary);
+
+bool back_Bit_Byte(Binary binary);
+
+Binary back_Binary(Binary binary);
+
+void pop_back_Binary(Binary binary);
+
+void left_shift_Binary(Binary binary, int n);
+
+void right_shift_Binary(Binary binary, int n);
+
+void or_Binary(Binary* dest, Binary source);
+
+void and_Binary(Binary* dest, Binary source);
+
+void print_hexa_Binary(Binary binary);
+
+Binary zero_Binary();
+
+Binary un_Binary();
+
+#endif

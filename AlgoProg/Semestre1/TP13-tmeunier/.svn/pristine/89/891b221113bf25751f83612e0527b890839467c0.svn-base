@@ -1,0 +1,42 @@
+/*******************************************************************************
+ *  Auteur  : Xavier CRÉGUT <nom@n7.fr>
+ *  Objectif :
+ *	Spécification d'une SDA, structure de données associative
+ ******************************************************************************/
+
+#ifndef SDA__H
+#define SDA__H
+
+#include <stdbool.h>
+#include "types.h"
+
+#include "sda-specifique.h"
+
+// TODO: Donner la spécification des sous-programmes dont la spécification est la même
+// pour LCA et TH.
+
+//2. Indiquer si une SDA est vide ou non.
+bool empty(LCA this);
+
+//3. Ajouter dans une SDA une donnee en precisant sa clef. Si la clef est dejà utilisee, la nouvelle donnee remplace la donnee precedemment associee à cette clef.
+void add(LCA* this, Clef key, Donnee value);
+
+//4. Supprimer d’une SDA la donnee associee à une clef. Si la clef n’est pas utilisee dans la SDA, la SDA n’est pas modifiee.
+void delete(LCA* this, Clef key);
+
+//5. Indiquer si une clef est utilisee dans une SDA. Une clef est utilisee par une SDA si une donnee a ete enregistree avec cette clef.
+bool has_key(LCA this, Clef key);
+
+//6. Recuperer la donnee associee à une clef. On considère que cette clef doit necessairement etre une clef utilisee dans la SDA.
+Donnee getValue(LCA this, Clef key);
+
+//7. Vider une SDA : supprimer toutes les donnees qu’elle contient. Elle est alors vide.
+void clear(LCA* this);
+
+//8. Detruire une SDA, c’est-à-dire liberer toutes les ressources qu’elle utilise.
+void destroy(LCA* this);
+
+//9. Afficher une SDA, c’est-à-dire tous les couples (clef, donnee) enregistres dans la SDA. Cet affichage est à des fins de mise au point (voir section 1.4)
+void printSDA(LCA this);
+
+#endif

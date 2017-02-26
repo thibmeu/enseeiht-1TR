@@ -1,0 +1,36 @@
+import java.util.*;
+/**
+ * 
+ * @author Driouich Ilias
+ * @version 1.0
+ */
+public class Reseau  {
+	
+	private Map<String, Noeud> noeuds;
+	
+	public Noeud getNoeud(String IP){
+		noeuds.get(IP);
+		
+	}
+
+    public addNoeud(Noeud noeud, String IP){
+		noeuds.put(IP, noeud);
+	}
+
+    public removeNoeud(String IP){
+		noeuds.remove(IP);
+	}
+
+    public pauseNoeud(String IP){
+		
+	}
+
+    public wakeNoeud(String IP){
+		
+	}
+
+    public envoiePaquet(String IP){
+		
+	}
+	
+}

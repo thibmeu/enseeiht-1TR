@@ -1,0 +1,54 @@
+#ifndef COMPRESS_H
+#define COMPRESS_H
+
+#define CHAR_MAX 256
+
+#include "tree.h"
+#include "binary.h"
+#include "couple.h"
+#include "compress-commun.h"
+
+void print_tab_Couple(Couple* couples, int size);
+
+void init_freq(Couple* couples);
+/*
+ * Procedure init_freq(couples: Tableau de Couple, in out)
+ * 
+ * Initialise un taleau de couples
+ *
+ * Assure: couples[i].value == (ième caractère de l'ascii) et couple[i].freq == 0
+ */
+
+int frequence(FILE* fichier, Couple* couples); 
+/*
+ * Fonction frequence(fichier: Fichier, in; couples: Tableau de Couple, in out): Entier
+ * 
+ * Retourne la taille du fichier decompressé et détermine la fréquence de chaque caractère des couples
+ * 
+ * Necessite:
+ * 		couples est initialisé
+ * 
+ */
+ 
+ 
+void tri_Couple(Couple* couples);
+
+void add_couple_List_Tree(List list, Couple couple);
+
+size_t build_Tree(Couple* couples, Tree* tree); //retourne la taille de l'arbre
+
+void description_Tree(Tree tree, Binary descriptions, Value** caracs); //taille de caracts = taille de l'arbre
+
+void mise_en_forme_description(Binary descriptionTree);
+
+void write_forhead(FILE* output, size_t sizeText, size_t sizeTree, Value* caracs);
+
+int indice_tableau(Value elmt, Value* tableau, size_t sizeTab);
+//Necessite
+// elmt appartient aux tableau, sinon SEGFAULT
+
+void write_body(FILE* input, FILE* output, Binary descriptionTree, Binary* tableCorresp, Value* caracs, size_t sizeTree);
+
+void compress(FILE* input, FILE* output);
+
+#endif

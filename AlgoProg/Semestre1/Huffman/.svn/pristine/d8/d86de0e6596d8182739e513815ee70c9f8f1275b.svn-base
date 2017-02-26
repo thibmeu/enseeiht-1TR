@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "compress.h"
+
+#define CHAR_MAX 256
+
+void init_freq(Couple* couples)
+{
+	for (int iCouple = 0; iCouple < CHAR_MAX; iCouple++)
+		init_Couple(&couples[iCouple], 0, (char) iCouple);
+}
+
+int frequence(FILE* fichier, Couple* couples)
+{
+	char caract = 'a';
+	int size_file = 0;
+	while (!feof(fichier))
+	{
+		caract = fgetc(fichier);
+		couples[(int)caract].freq += 1;
+		size_file++;
+	}
+	return size_file;
+}
+
+void tri_Couple(Couple* couples)
+{
+	qsort(couples, CHAR_MAX, sizeof(Couple), compar_Couple);
+}
+
+int build_Tree(Couple* couples, Tree* tree){
+	int iCouple = 0;
+	int size_tree;
+	List list;
+	init_List(&list, sizeof(Tree), init_void_Tree, destruct_Tree, equal_Tree, compar_Tree);
+	
+	//on passe toutes les cellules ou la frequence est nulle
+	while (couples[iCouple].freq == 0)
+		iCouple++;
+	size_tree = CHAR_MAX - iCouple;
+	
+	//on transforme la liste de cellules en liste d'arbres a un noeud
+	while (iCouple < CHAR_MAX)
+	{
+		Tree treeTampon;
+		init_Tree(&treeTampon);
+		couple_to_Tree(&treeTampon, couples[iCouple]);
+		add_List(list, &treeTampon);
+		iCouple++;
+	}
+	
+	fusion_List_Tree(list);
+	
+	//On recupere le seul arbre de la liste qui est l'arbre fusionne
+	*tree = front_List(list);
+	
+	return size_tree;
+}
+
+void description_Tree(Tree tree, Binary description, Value* caracs, int iCarac)
+{
+	if (tree != NULL)
+	{
+		if (!is_leef_Tree(tree))
+		{
+			caracs[iCarac] = tree->couple.value;
+			iCarac ++;
+		}
+		
+		left_shift_Binary(description, 1); //ajouter un zero en fin de sequence binaire
+		description_Tree(tree->left, description, caracs, iCarac);
+		
+		
+		left_shift_Binary(description, 1);
+		Binary unBinary = un_Binary();
+		or_Binary(&description, unBinary); //ajouteur un 1 en fin de sequence binaire
+		destruct_Binary(&unBinary);
+		
+		description_Tree(tree->left, description, caracs, iCarac);
+	}
+}
+
+void construct_table_caracts(Tree tree, Binary output[CHAR_MAX], Binary tampon_Binary){
+	if (is_leef_Tree(tree))
+		output[(int) tree->couple.value] = tampon_Binary;
+	else
+	{
+		left_shift_Binary(tampon_Binary, 1); //ajouter un zero en fin de sequence binaire
+		construct_table_caracts(tree->left, output, tampon_Binary);
+		
+		Binary unBinary = un_Binary();
+		left_shift_Binary(tampon_Binary, 1);
+		or_Binary(&tampon_Binary, unBinary); //ajouteur un 1 en fin de sequence binaire
+		construct_table_caracts(tree->left, output, tampon_Binary);
+		destruct_Binary(&unBinary);
+	}
+}
+
+void write_forhead(FILE* output, int size_txt, int size_tree, Value* caracs)
+{
+	fprintf(output, "%d", size_txt);
+	fprintf(output, "%c", (char) size_tree);
+	for (int iChar = 0; iChar < size_tree; iChar++)
+		fprintf(output, "%c", caracs[iChar]);
+}
+
+void compress(FILE* input, FILE* output){
+	Couple couples[CHAR_MAX];
+	init_freq(couples);
+	
+	Tree tree;
+	Binary description_tree = zero_Binary();
+	Binary table_caracs[CHAR_MAX];
+	Binary tampon_Binary = zero_Binary();
+	Binary BinaryCaract;
+	int size_tree;
+	int size_file;
+	char read_caractere;
+	
+
+	size_file = frequence(input, couples);
+	tri_Couple(couples);
+	size_tree = build_Tree(couples, &tree);
+	
+	Value tab_caracs[size_tree];
+	description_Tree(tree, description_tree, tab_caracs, 0);
+	construct_table_caracts(tree, table_caracs, tampon_Binary);
+	tampon_Binary = zero_Binary();
+	
+	puts("put");
+	write_forhead(output, size_file, size_tree, tab_caracs);
+	do
+	{
+		fscanf(input, "%c", &read_caractere);
+		BinaryCaract = table_caracs[(int) read_caractere];
+		concatenate_Binary(&tampon_Binary, BinaryCaract);
+		write_Binary(tampon_Binary, output);
+	} while (!feof(input));
+}

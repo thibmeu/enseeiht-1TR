@@ -1,0 +1,33 @@
+Résultats de checkstyle dans logs/Polygone.checkstyle
+
+Résultat de recherche de similitudes sur Polygone.java dans logs/Polygone.sim
+
+Compilation de Polygone : OK.
+
+Compilation de SujetPolygoneTest : OK.
+Test SujetPolygoneTest : OK (20 tests)
+
+Compilation de PolygoneTest : OK.
+Test PolygoneTest : OK (1 test)
+
+Compilation de RobustessePolygoneTest : OK.
+Test RobustessePolygoneTest : OK (13 tests)
+
+Compilation de FormePolygoneTest : OK.
+Test FormePolygoneTest : OK (19 tests)
+
+Compilation de CreerRectangleTest : OK.
+Test CreerRectangleTest : OK (12 tests)
+Test de CreerRectangleTest avec PolygoneMini : OK
+Test de CreerRectangleTest avec PolygoneMutant1 : OK
+Test de CreerRectangleTest avec PolygoneMutant2 : OK
+Test de CreerRectangleTest avec PolygoneMutant3 : OK
+Test de CreerRectangleTest avec PolygoneMutantA : OK
+Test de CreerRectangleTest avec PolygoneMutantB : OK
+Test de CreerRectangleTest avec PolygoneMutantC : OK
+Test de CreerRectangleTest avec PolygoneMutantD : OK
+Test de CreerRectangleTest avec PolygoneMutantE : OK
+Test de CreerRectangleTest avec PolygoneMutantF : OK
+Test de CreerRectangleTest avec PolygoneMutantG : OK
+Test de CreerRectangleTest avec PolygoneMutantH : OK
+Test de CreerRectangleTest : réussi.

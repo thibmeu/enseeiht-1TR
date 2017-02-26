@@ -1,0 +1,191 @@
+/*********************************************************************
+**  Auteurs  : 
+**  Objectif : 
+*********************************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <time.h>
+#include <stdbool.h>
+#define NB_CARTES 52
+#define NB_ENSEIGNES 4
+#define NB_VALEURS 13
+#define NB_COULEURS NB_ENSEIGNES/2
+#define NB_ETAPES 2
+#define NB_CARTES_ETOURDI 10
+#define TAILLE_LIGNE 3
+#define TAILLE_COLONNE 6
+#define DECALAGE 1
+#define MAX_NOM 100
+#define MAX_JOUEURS 1000
+#define NB_LIGNES_AFFICHAGE NB_LIGNES*TAILLE_LIGNE+1 + 2*DECALAGE
+#define NB_COLONNES_AFFICHAGE NB_COLONNES*TAILLE_COLONNE+1 + 2*DECALAGE
+
+const char txtEnseigne[NB_ENSEIGNES][TAILLE_LIGNE] = {"PIQ", "COE", "CAR", "TFL"};
+const char txtValeur[NB_VALEURS][TAILLE_LIGNE] = {"AS ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", "10 ", "VLT", "DME", "ROI"};
+const Position memoireVide = {-1, -1};
+
+enum Enseigne {Pique, Coeur, Carreau, Trefle};
+typedef enum Enseigne Enseigne;
+enum Valeur {As, Deux, Trois, Quatre, Cinq, Six, Sept, Huit, Neuf, Dix, Valet, Dame, Roi};
+typedef enum Valeur Valeur;
+enum Difficulte{NAIF, EXPERT, ETOURDI};
+typedef enum Difficulte Difficulte;
+enum EtatCarte = {VISIBLE, CACHEE, RETIREE};
+typedef enum EtatCarte EtatCarte;
+
+struct Position
+{
+	int ligne;
+	int colonne;
+};
+typedef struct Position Position;
+
+struct Carte
+{
+	Enseigne enseigne;
+	Valeur valeur;
+};
+typedef struct Carte Carte;
+
+void init_Carte(Carte* carte, Enseigne enseigne, Valeur valeur)
+{
+	(*carte).enseigne = enseigne;
+	(*carte).valeur = valeur;
+};
+
+typedef Carte Jeu52 [NB_CARTES];
+
+void init_Jeu52(Jeu52 jeu)
+{
+	for(int iEnseigne = 0; iEnseigne < NB_EnseigneS; iEnseigne++)
+		for(int iValeur = 0; iValeur < NB_VALEURS; iValeur++)
+		{
+			Carte iCarte = {iEnseigne, iValeur};
+			*(jeu+iEnseigne*NB_VALEURS+iValeur) = iCarte;
+		}
+}
+
+struct CarteReele
+{
+	Carte carte;
+	EtatCarte etat;
+}
+typedef struct CarteReele CarteReele;
+
+typedef CarteReele Tapis [NB_ENSEIGNES][NB_VALEURS];
+
+void init_Tapis(Tapis tapis)
+{
+	Jeu52 jeu;
+	init_Jeu52(jeu);
+	battre(jeu)
+	for(int iEnseigne = 0; iEnseigne < NB_EnseigneS; iEnseigne++)
+		for(int iValeur = 0; iValeur < NB_VALEURS; iValeur++)
+			tapis[iEnseigne][iValeur] = jeu[iEnseigne*NB_VALEURS+iValeur];
+}
+
+struct Joueur
+{
+		char nom[MAX_NOM];
+		bool humain;
+		Difficulte difficulte;//Si le joueur est virtuel vaut NULL
+		Position memoire[NB_CARTES] //initialiser a {-1,-1} == memoire vide
+}
+
+void init_Joueur(char nom[MAX_NOM], bool humain, Difficulte difficulte, Position memoire[NB_CARTES], Joueur *joueur)
+{
+	for (int iChar = 0; iChar < MAX_NOM; iChar++)
+		joueur->nom[iChar] = nom[iChar];
+	joueur->humain = humain;
+	joueur->difficulte = difficulte;
+	for (int iPosition = 0; iPosition < NB_CARTES; iPosition++)
+		joueur->memoire[iPosition] = memoire[iPosition];
+}
+
+//
+//Debut des fonctions de Jeu52
+//
+
+void permuter(Jeu52 jeu)
+{
+	int iCarte1 = rand()%NB_CARTES;
+	int iCarte2 = rand()%NB_CARTES;
+	Carte temp = *(jeu+iCarte1);
+	*(jeu+iCarte1) = *(jeu+iCarte2);
+	*(jeu+iCarte2) = temp;
+}
+
+void battre(Jeu52 jeu)
+{
+	const int NB_BATTUES = 10*1000;
+	for(int iBattue = 0; iBattue < NB_BATTUES; iBattue++)
+		permuter(jeu);
+}
+
+void calculPosCartes(Jeu52 jeu, int posCarte[NB_CARTES])
+{
+	for(int iCarte = 0; iCarte < NB_CARTES; iCarte++)
+	{
+		int iEnseigne = (*(jeu+iCarte)).enseigne;
+		int iValeur = (*(jeu+iCarte)).valeur;
+		posCarte[iEnseigne*NB_VALEURS+iValeur] = iCarte;
+	}
+	
+}
+
+void affichage(Jeu52 jeu)
+{
+	int posCarte[NB_CARTES];
+	calculPosCartes(jeu, posCarte);
+	for(int iCarte = 0; iCarte < NB_CARTES; iCarte++)
+		printf("%d ", posCarte[iCarte]);
+	puts("");
+}
+
+bool bienBattu(Jeu52 jeu)
+{
+	int posCarte[NB_CARTES];
+	calculPosCartes(jeu, posCarte);
+	for(int iCarte = 0; iCarte < NB_CARTES-1; iCarte++)
+		if ((posCarte[iCarte]+1 == posCarte[iCarte+1]) || posCarte[iCarte] < 0 || posCarte[iCarte] >= NB_CARTES)
+			return false;
+	return (posCarte[NB_CARTES-1] < NB_CARTES && posCarte[NB_CARTES-1] >= 0);
+}
+//
+//Fin des fonctions de Jeu52
+//
+
+void init_affTapis(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE])
+{
+	//pas envie
+	;
+}
+
+void initialisation(Tapis tapis, char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE], Joueur joueur[MAX_JOUEURS])
+{
+	init_Tapis(tapis);
+	init_affTapis(tapis, affTapis);
+	//entrer le nb de joueur
+	//init_joueur sur les parametres
+}
+
+void jouerMemory()
+{
+	//_Mise en place du jeu
+	Tapis tapis;
+	char affTapis[NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE];
+	Joueur joueur[MAX_JOUEURS];
+	
+	initialisation(tapis, joueur, affTapis);
+	
+	//_Deroulement du jeu
+	//_Determination des vainqueurs
+}
+
+int main()
+{
+	jouerMemory();
+	
+	return EXIT_SUCCESS;
+}

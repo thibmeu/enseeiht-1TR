@@ -1,0 +1,210 @@
+Groupe  : 55
+Membres : Thibault Meunier, Hugo Montal
+--------------------------------------------------------------------------------
+
+
+Consigne : Dans ce fichier, il faut répondre à la place des "..." et sur les
+lignes qui les suivent.  Le texte déjà écrit doit être conservé !
+
+
+=====[ Raffinages ]=============================================================
+
+-- Ne donner que les niveaux de raffinages qui sont informatifs.   Il est
+-- généralement inutile de donner le dernier niveau de raffinage s'il ne
+-- contient pas d'étapes non élémentaires.
+
+Constantes:
+	NB_CARTES   <- 52
+	NB_ENSEIGNES <- 4
+	NB_COULEURS NB_ENSEIGNES/2
+	txtEnseigne[NB_ENSEIGNES] <- {"PIQ", "COE", "CAR", "TFL"}
+	NB_VALEURS  <- 13
+	txtValeur <- {"AS ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", "10 ", "VLT", "DME", "ROI"}
+	NB_ETAPES <- 2
+	NB_CARTES_ETOURDI <- 10
+	TAILLE_LIGNE <- 3
+	TAILLE_COLONNE <- 6
+	DECALAGE <- 1
+	MAX_NOM <- 10
+	MIN_JOUEURS <- 2
+	MAX_JOUEURS <- 1000
+	NB_LIGNES <- NB_ENSEIGNES
+	NB_COLONNES <- NB_VALEURS
+	NB_LIGNES_AFFICHAGE <- NB_LIGNES*TAILLE_LIGNE+1 + 2*DECALAGE
+	NB_COLONNES_AFFICHAGE <- NB_COLONNES*TAILLE_COLONNE+1 + 2*DECALAGE
+	NB_ETATS_CARTE <- 3
+	NB_IA <- 3
+	HAUTEUR_CARTE <- 2
+	LARGEUR_CARTE <- 3
+	affEtatCarte[NB_ETATS_CARTE][TAILLE_LIGNE][TAILLE_COLONNE] <-
+		{{"???", "???"},	//VISIBLE --> INCONNU
+		 {"~~~", "~~~"},	//CACHEE
+		 {"   ", "   "}};	// RETIREE
+	Position memoireVide <- {-1, -1}
+
+Types:
+	Enumeration Enseigne{PIQUE, COEUR, CARREAU, TREFLE}
+	Enumeration Valeur{AS, 2, 3, 4, 5, 6, 7, 8, 9, 10, VALET, DAME, ROI}
+	Enumeration Difficulte{NAIF, EXPERT, ETOURDI}
+	Enumeration EtatCarte = {VISIBLE, CACHEE, RETIREE}
+	Structure Position:
+		ligne: Entier
+		colonne: Entier
+	Structure Carte:
+		enseigne: Enseigne
+		valeur: Valeur
+	Structure CarteReele:
+		carte: Carte
+		etat: EtatCarte
+	Structure Joueur: 
+		nom: Chaine de caractère
+		humain: Booleen
+		difficulte: Difficulte //Si le joueur est virtuel vaut NULL
+		memoire: Tableau de [NB_CARTES] Position --initialiser a {-1,-1} == memoire vide
+	Type Jeu52: Tableau de [NB_CARTES] Carte
+	Type Tapis: Tableau de [NB_ENSEIGNES][NB_VALEURS] CarteReele
+
+R0: Jouer au jeu du Memory
+
+--R1--
+
+R1: Raffinage de "Jouer au jeu du Memory"
+_Mise en place du jeu (initialisation) tapis:Tapis (out) | affTapis:Tableau de [NB_LIGNES_AFFICHAGE][NB_COLONNES_AFFICHAGE] caracteres (out) | joueur:Tableau de [nbJoueurs] Joueur (out) | nbJoueurs:entier (out)
+_Deroulement du jeu (partie) tapis:(in) | affTapis:(in) | joueur:(in/out) | nbJoueurs:(in/out) 
+_Affichage des vainqueurs (affichageVainqueurs) joueur:(in) | nbJoueurs:(in)
+
+--R2--
+
+R2: Raffinage de "Mise en place du jeu"
+_Initialisation du tapis 	tapis:(out)
+_Initialisation de l'affichage du tapis  affTapis:(out)
+_Initialisaton des joueurs (init_tab_joueur)   nbJoueurs:(out)  joueur:(out)
+
+R2: Raffinage de "Deroulement du jeu"
+_Determination aleatoire du premier joueur  iJoueur:Entier out
+_Initialisation du nombre de carte restante  nbCartesRestantes:Entier (out)
+_Tant qu'il reste des cartes sur le tapis (testTapis) et qu'il reste des joueurs en jeu: 
+	_Les joueurs jouent chacun leur tour nbJoueurs (tourJoueur) tapis:(in/out) | affTapi:(in) | nbJoueurs:(in) | iJoueur:(in) | nbCartesRestantes:(in/out)
+	_Si il ne reste plus de joueurs on quitte le jeu
+	
+R2: Raffinage de "Affichage des vainqueurs"
+_Classement des joueurs selon leur score (qsort)  nbJoueurs:(in) | joueur:(in/out)
+_Affichage des scores et des joueurs avec les classements   nbJoueurs:(in) | joueur:(in)
+
+--R3--
+
+R3: Raffinage de "Initialisation du tapis"
+_Creation d'un jeu de 52 cartes		jeu:Jeu52 (out)
+_Battue du jeu	jeu:(in/out)
+_Placement du jeu sur un tapis	jeu:(in) | tapis:(out)
+
+R3: Raffinage de "Tour d'un joueur"
+_Proposition d'abandon  joueur[iJoueur]:(in/out)
+_Le joueur choisi successivement deux cartes et les retourne  tapis:(in/out) | carteRetournee: Tableau de [NB_ETAPES] Position (out) | affTapis:(in) | joueur[iJoueur]:Joueur (in) | nbCartesRestantes:(in)
+_Affichage du tapis	affTapis:(in)
+_Si celles-ci sont identiques	carteRetournee:(in) | tapis:(in)
+	_La paire est extraite du jeu	tapis:(in/out) | carteRetournee:(in) | nbCartesRestantes:(in/out)
+	_Le joueur marque 1 point		joueur[iJoueur].score:(in/out)
+	_Il rejoue  iJoueur:(in/out)
+_Sinon
+	_Les cartes sont replacees face cachee	tapis:(in/out) | carteRetournee:(in) | affTapis:(in/out)
+	_Le joueur termine son tour
+_Chaque joueur memorise les cartes retournees a sa facon	nbJoueurs: in, joueur:in/out, carteRetournee:in
+
+--R4--
+
+R4: Raffinage de "Choix successif des cartes" (joueur:Joueur <- joueur[iJoueur])
+-Pour iEtape de 0 a NB_ETAPES-1: iEtape:Entier (out)
+	_Afficher le tapis si le joueur qui joue est humain	 affTapis:(in)
+	_Saisie d'une carte	 tapi:(in) | joueur:(in) | nbCartesRestantes:(in) | carteRetournee:(in/out) | iEtape:(in)
+	_La retourner  tapis:(in/out) | carteRetournee[iEtape]:(in) | affTapis:(in/out)
+
+R5: Raffinage de "Saisie d'une carte"
+_Si le joueur est humain
+	_Repeter
+		Lire la position de la carte  carteRetournee[iEtape]:Position (in/out)
+	_Jusqu'a ce que la carte soit valide
+_Sinon	
+	_Selon difficulte Dans	joueur[iJoueur].difficulte (in)
+		NAIF:	IA Naif	 tapis:(in) | nbCartesRestantes:(in) | carteRetournee[iEtape]:(in/out)
+		EXPERT et ETOURDI: 
+			_Initialisation de la carte precedente  cartePrec:Position (out)
+			_IA Memoire  tapis:(in) | nbCartesRestantes:(in) | joueur.memoire:(in) | cartePrec:(in) | carteRetournee[iEtape]:(in/out)
+
+,,,,,,,,,,,,,,,,,,,,,	
+R5: Raffinage "Changement carte" --Rendre visible ou cachee, retirer une carte du jeu
+affCarte[2][3]
+CarteReele* carte <- tapis[position.ligne][position.colonne]
+_Selon modifCarte Dans:
+	_VISIBLE:
+		affCarte[0] <- txtValeur[carte->carte.valeur]
+		affCarte[1] <- txtEnseigne[carte->carte.enseigne]
+	_CACHEE:
+		affCarte <- carteCachee
+	_RETIREE:
+		affCarte <- carteRetiree
+_carte->etat <- modifCarte
+_On place affCarte sur tapisAffichage a la bonne position
+,,,,,,,,,,,,,,,,,,,,,,
+
+R6: Raffinage de "IA Naif"
+_iCarte <- aleatoire()%(nbCartesRestantes+1)  iCarte:Entier out
+_On renvoie la position de la iCarte (parcours ligne, puis colonne) cachee  iCarte:(in)
+
+R6: Raffinage de "IA Memoire"
+_Initialisation a faux d'un tableau correspondant aux cartes du jeu (sans differencaition des enseignes de meme couleur: --((enseigne+1)/2)%2 si ==1 rouge sinon noire)  dejaVuCarte:Tableau de [NB_COULEURS][NB_VALEURS] Booleen (out)
+_Si il y a une carte precedente:
+	_On met a vrai la position dans dejaVuCarte correspondant a la carte precedente  dejaVuCarte[[postition de cartePrec]]:(in/out)
+_Tant qu'on n'a pas parcouru toutes les cartes en memoire et que la carte testee est toujours sur le tapis:  
+	_Si On a deja vu la paire de la carte courante:
+		_Renvoie la position de la carte courante  carteRetournee[iEtape]:(in/out)
+		_On quitte le sous programme
+	_Sinon
+		_On met a jour le tableau de booleen   dejaVuCarte[position carte courante] <- 1  
+_On parcourt le tapis (gauche puis bas) pour trouver au hazard une carte cachee et non presente dans le tableau   tapis:(in) | carteRetournee:(in/out)
+
+
+=====[ Tests ]==================================================================
+
+-- Expliquer rapidement comment vous avez testé votre programme.
+
+Test des IA par 2:
+	Expert vs Expert	(vainqueur = aleatoire)
+	Expert vs Naif		(vainqueur = Expert)
+	Expert vs Etourdi	(vainqueur = Expert)
+	Etourdi vs Naif		(vainqueur = Etourdi)
+	Etourdi vs Etourdi	(vainqueur = aleatoire)
+	Naif vs Naif		(vainqueur = aleatoire)
+	
+Test des humains (test par des personnes exterieurs au groupe):
+	humain vs humain	(vainqueur = aleatoire)
+	humain vs Expert	(vainqueur = Expert)
+	humain vs Etourdi	(vainqueur = depend de l'humain)
+	humain vs Naif		(partie non termine (avantage a l'humain))
+
+Test avec plus de 2 joueurs ia et humains melanges
+
+Pour humain, test des entrees de position:
+	Bonne position
+	Carte deja retournee		(detection erreur)
+	Ligne et colonne inversees	(detection erreur)
+	Colonne fausse				(detection erreur)
+	Ligne fausse				(detection erreur)
+	Autres caracteres			(detection erreur)
+	Debordement					(detection erreur)
+
+
+
+
+=====[ Difficultés ]============================================================
+
+-- Indiquer les difficultés rencontrées et les solutions apportées.
+
+...
+
+
+=====[ Remarques diverses ]=====================================================
+
+...
+
+--------------------------------------------------------------------------------

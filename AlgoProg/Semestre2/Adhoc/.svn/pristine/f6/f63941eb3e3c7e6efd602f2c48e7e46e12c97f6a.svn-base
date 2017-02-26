@@ -1,0 +1,53 @@
+/** 
+ * @author LAMINE Abdelmalek
+ * @version 1.0
+ */
+ 
+
+import java.util.*;
+
+public class Noeud {
+	
+	
+	/** Position du noeud*/
+	private Position position;
+	/** Portée du noeud*/
+	private int portee;
+	/** Debit maximum du noeud*/
+	private int debit; // ???
+	/** Liste des paquet en transition par le noeud*/
+	private List<Paquet> paquetAttente;
+	/** Nom du noeud*/
+	private int reference;
+	/** Table de routage du noeud contenant toute les adresse connu*/
+	private tableRoute tableRoutage;
+	
+	
+	/*public Noeud(int ref, int portee, ....) {
+		
+		//TODO
+	}*/
+	
+	/** Fonction qui permet d'initier une demande de route vers un autre
+	 * noeud du réseaux.
+	 * @param E un autre noeud du réseaux
+	 */
+	public void demandeRoute(Noeud E) {
+		//TODO
+	}
+	
+	/** Fonction qui permet d'envoyer un paquet a tous les noeuds du réseaux qui sont a porté.
+	 * Si aucun noeud n'est a porté, le paquet reste en attente.
+	 * @param p le paquet a envoyer
+	 */
+	public void envoyerPaquet(Paquet p) {
+		//TODO
+	}
+	
+	public void envoyerPaquet(Message M, Noeud N) {
+		//TODO
+	}
+	
+	
+	
+	

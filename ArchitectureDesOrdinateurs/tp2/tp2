@@ -1,0 +1,32 @@
+; Programme de démarrage TP1.S
+
+.include "p24FJ256GB106.inc"	; Définitions pour ucontrôleur
+
+.equiv PLL96DIS_ON,     0xF7FF ; Enabled
+; Définition des paramètres de configuration (horloges, USB, watchdog)
+; CONFIG 1 : JTAG off, watchdog timer off
+config __CONFIG1, JTAGEN_OFF & ICS_PGx2 & FWDTEN_OFF
+; CONFIG 2 :Using the 12MHz clock provided by the PIC18F67J50 (debug)
+config __CONFIG2, IESO_OFF & PLL96DIS_ON & PLLDIV_DIV3 & FNOSC_PRIPLL & POSCMOD_HS
+; Ces paramètres conduisent à une fréquence horloge système de 32 MHz
+        .global __reset          ;The label for the first line of code. 
+
+;..............................................................................
+;Code Section in Program Memory
+;..............................................................................
+
+.text                             ;Start of Code section
+
+__reset:
+
+        MOV #__SP_init, W15       ;Initalize the Stack Pointer
+        MOV #__SPLIM_init, W0     ;Initialize the Stack Pointer Limit Register
+        MOV W0, SPLIM
+
+		MOV #0X55AA, W0
+		MOV #0X1234, W1
+
+ 		BRA $	; boucle sans fin
+
+.end                               ;End of program code in this file
+;..............................................................................

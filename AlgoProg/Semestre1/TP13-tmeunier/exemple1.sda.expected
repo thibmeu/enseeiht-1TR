@@ -1,0 +1,19 @@
+> size 11
+> hash taille
+> add un 1
+> add deux 2
+> add trois 3
+> add quatre 4
+> add cinq 5
+> add vingt-et-un 21
+> add quatre-vingt-dix-neuf 29
+> value deux
+2
+> value dix
+----
+> contains dix
+no
+> contains deux
+yes
+> clear
+> end

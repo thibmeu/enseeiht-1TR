@@ -1,0 +1,42 @@
+Groupe  : 
+Membres :
+--------------------------------------------------------------------------------
+
+
+Consigne : Dans ce fichier, il faut répondre à la place des "..." et sur les
+lignes qui les suivent.  Le texte déjà écrit doit être conservé !
+
+
+=====[ Raffinages ]=============================================================
+
+-- Ne donner que les niveaux de raffinages qui sont informatifs.   Il est
+-- généralement inutile de donner le dernier niveau de raffinage s'il ne
+-- contient pas d'étapes non élémentaires.
+
+
+R0 : ...
+
+Exemples : On ne donnera pas d'exemple d'utilisation
+
+R1 : ...
+
+
+=====[ Tests ]==================================================================
+
+-- Expliquer rapidement comment vous avez testé votre programme.
+
+...
+
+
+=====[ Difficultés ]============================================================
+
+-- Indiquer les difficultés rencontrées et les solutions apportées.
+
+...
+
+
+=====[ Remarques diverses ]=====================================================
+
+...
+
+--------------------------------------------------------------------------------

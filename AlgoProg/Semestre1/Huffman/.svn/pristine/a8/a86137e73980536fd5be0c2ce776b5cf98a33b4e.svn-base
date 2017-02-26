@@ -1,0 +1,42 @@
+#ifndef BINARY_H
+#define BINARY_H
+
+#include <stdio.h>
+#include <stdbool.h>
+#include "byte.h"
+#include "list.h"
+
+struct Binary
+{
+	List byte;
+	size_t size;
+};
+typedef struct Binary* Binary;
+
+void init_Binary(Binary* binary, Byte* byte, size_t size);
+
+void destruct_Binary(Binary* binary);
+
+void swap_Binary(Binary a, Binary b);
+
+void concatenate_Binary(Binary* dest, Binary source);
+
+void write_Binary(Binary* binary, FILE* file);	//Non written bits are let inside binary
+
+int size_in_Byte(Binary binary);
+
+Binary front_Binary(Binary binary);
+
+void pop_front_Binary(Binary* binary);
+
+void left_shift_Binary(Binary* binary, int n);
+
+void right_shift_Binary(Binary* binary, int n);
+
+void or_Binary(Binary* dest, Binary source);
+
+void and_Binary(Binary* dest, Binary source);
+
+Binary un_Binary();
+
+#endif

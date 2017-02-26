@@ -1,0 +1,307 @@
+#include "binary.h"
+
+void init_Binary(Binary* binary)
+{
+	*binary = malloc(sizeof(struct Binary));
+	init_List(&((*binary)->byte), sizeof(Byte), init_Byte, free, equal_Byte, noOrder_Byte);
+	(*binary)->size = 0;
+}
+
+void init_fromByte_Binary(Binary* binary, Byte* byte, size_t size)
+{
+	init_Binary(binary);
+	
+	for(int iByte = 0; iByte <= size / BITSPERBYTE; iByte++)
+		add_List((*binary)->byte, &byte[iByte]);
+	
+	(*binary)->size = size;
+}
+
+void destruct_Binary(Binary* binary)
+{
+	destroy_List(&((*binary)->byte));
+	free(*binary);
+	*binary = NULL;
+}
+
+void swap_Binary(Binary a, Binary b)
+{
+	struct Binary tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+void concatenate_Binary(Binary* dest, Binary source)
+{
+	left_shift_Binary(*dest, source->size);
+	or_Binary(dest, source);
+}
+
+void write_Binary(Binary* binary, FILE* file)
+{
+	if (file != NULL)
+		while ((*binary)->size >= BITSPERBYTE)
+		{
+			fprintf(file, "%c", *(Byte*)front_List(front_Binary(*binary)->byte));
+			pop_front_Binary(binary);
+		}
+}
+
+int size_in_Byte(Binary binary)
+{
+	return binary->size/BITSPERBYTE + (binary->size%BITSPERBYTE != 0);
+}
+
+void fit_size_Binary(Binary binary)
+{
+	while (binary->size != 0 && front_Byte(binary) == 0)
+		pop_front_Byte(binary);
+	
+	Byte frontByte = front_Byte(binary);
+	size_t highByte = 0;
+	while (frontByte != 0)
+	{
+		highByte++;
+		frontByte >>= 1;
+	}
+	
+	binary->size = (size_List(binary->byte)-1)*BITSPERBYTE + highByte;
+}
+
+Byte front_Byte(Binary binary)
+{
+	if (binary->size != 0)
+		return *(Byte*)binary->byte->cell->data;
+	return 0;
+}
+
+Binary front_Binary(Binary binary)
+{
+	if (binary->size == 0)
+		return zero_Binary();
+	Byte begin = *(Byte*)front_List(binary->byte);
+	Byte end;
+	size_t shift;
+	size_t size = (binary->size <= BITSPERBYTE) ? binary->size : BITSPERBYTE;
+	
+	if (binary->size <= BITSPERBYTE)
+	{
+		end = 0;
+		shift = BITSPERBYTE;
+	}
+	else
+	{
+		end = *(Byte*)get_i_List(binary->byte, 1);
+		shift = (binary->size)%BITSPERBYTE;
+	}
+	
+	begin <<= BITSPERBYTE - shift;
+	end >>= shift;
+	
+	Byte* res = malloc(BITSPERBYTE);
+	*res = begin | end;
+	
+	Binary r;
+	init_fromByte_Binary(&r, res, size);
+	free(res);
+	
+	return r;
+}
+
+void pop_front_Byte(Binary binary)
+{
+	if (binary->size != 0)
+	{
+		pop_front_List(binary->byte);
+		print_hexa_Binary(binary);
+		binary->size -= (binary->size+7) % BITSPERBYTE +1;
+	}
+}
+
+void pop_front_Binary(Binary* binary)
+{
+	if ((*binary)->size <= BITSPERBYTE)
+	{
+		pop_front_List((*binary)->byte);
+		(*binary)->size = 0;
+	}
+	else
+	{
+		size_t shift = ((*binary)->size)%BITSPERBYTE;
+		pop_front_List((*binary)->byte);
+		Byte* front = (Byte*)front_List((*binary)->byte);
+		
+		*front <<= BITSPERBYTE - shift;
+		*front >>= BITSPERBYTE - shift;
+	}
+}
+
+void pop_back_Binary(Binary* binary)
+{
+	pop_back_List((*binary)->byte);
+	(*binary)->size -= BITSPERBYTE;
+}
+
+void left_shift_Binary(Binary binary, int n)
+{
+	Byte zeroByte = 0;
+	Cell cell = binary->byte->cell;
+	bool firstCell = true;
+	while (cell != NULL)
+	{
+		//if first cell, need to create a new one to put the shift in
+		if (firstCell && (n+binary->size+7)%BITSPERBYTE < (binary->size+7)%BITSPERBYTE)
+		{
+			push_front_List(binary->byte, &zeroByte);
+			firstCell = false;
+			cell = binary->byte->cell;
+		}
+		
+		Byte* highByte = cell->data;
+		*highByte <<= n%BITSPERBYTE;
+		
+		if (cell->next != NULL)
+		{
+			Byte* lowByte = cell->next->data;
+			Byte secondPart = *lowByte;
+			
+			secondPart >>= BITSPERBYTE - n%BITSPERBYTE;
+			*highByte |= secondPart;
+		}
+		cell = cell->next;
+	}
+	
+	size_t nToAddByte =  n/BITSPERBYTE;
+	for (int iByte = 0; iByte < nToAddByte; iByte++)
+		push_back_List(binary->byte, &zeroByte);
+	
+	//Then remove unused part at the beginning
+	fit_size_Binary(binary);
+}
+
+void right_shift_Binary(Binary binary, int n)
+{
+	//Set new last position
+	size_t newSize = binary->size - n;
+	if (newSize <= 0)	//Place binary to zero
+	{
+		destruct_Binary(&binary);
+		init_Binary(&binary);
+	}
+	else
+	{
+		printf("sizeByte : %d | size : %lu\n", size_in_Byte(binary), binary->size);
+		size_t nToDeleteByte = size_in_Byte(binary) - n / BITSPERBYTE - 1;
+		size_t shift = newSize - nToDeleteByte;
+		printf("shift : %lu\n", shift);
+		
+		//Here, I need to deal with multiple byte shifting
+		
+		//This is in O(n2)  --> NEED TO BE LINEAR !!!!
+		for (int iByte = size_in_Byte(binary) - 1; iByte > 0; iByte--)
+		{
+			Byte* lowByte = get_i_List(binary->byte, iByte);
+			Byte* highByte = get_i_List(binary->byte, iByte-1);
+			puts("toto");
+			Byte firstPart = *highByte;
+			firstPart <<= shift;
+			
+			*lowByte >>= shift;
+			*lowByte |= firstPart;
+		}
+		//Shift for the front byte
+		*(Byte*)(binary->byte->cell->data) >>= shift;
+		
+		//Then remove unused part at the beginning
+		fit_size_Binary(binary);
+	}
+}
+
+void or_Binary(Binary* dest, Binary source)
+{
+	
+	//Align dest n source bytes
+	int shift = size_in_Byte(*dest) - size_in_Byte(source);
+	if (shift < 0)
+		swap_Binary(*dest, source);
+	
+	Cell cellDest = (*dest)->byte->cell;
+	Cell cellSource = source->byte->cell;
+	
+	while (shift != 0)
+	{
+		cellDest = cellDest->next;
+		shift = size_in_Byte(*dest) - size_in_Byte(source);
+	}
+	
+	//Or on each byte
+	while (cellDest != NULL)
+	{
+		*(char*)cellDest->data = *(char*)cellDest->data | *(char*)cellSource->data;
+		cellDest = cellDest->next;
+		cellSource = cellSource->next;
+	}
+	
+	fit_size_Binary(*dest);
+}
+
+void and_Binary(Binary* dest, Binary source)
+{
+	//Align dest n source bytes
+	int shift = size_in_Byte(*dest) - size_in_Byte(source);
+	if (shift > 0)
+		swap_Binary(*dest, source);
+	
+	while (shift != 0)
+	{
+		pop_front_List((*dest)->byte);	//first bytes : and with 0
+		shift = size_in_Byte(*dest) - size_in_Byte(source);
+	}
+	
+	//And on each byte
+	Cell cellDest = (*dest)->byte->cell;
+	Cell cellSource = source->byte->cell;
+	while (cellDest != NULL)
+	{
+		*(char*)cellDest->data = *(char*)cellDest->data & *(char*)cellSource->data;
+		cellDest = cellDest->next;
+		cellSource = cellSource->next;
+	}
+	
+	fit_size_Binary(*dest);
+}
+
+void print_hexa_Binary(Binary binary)
+{
+	if (binary->size == 0)
+		printf("0");
+	else
+	{
+		Cell cell = binary->byte->cell;
+		while (cell != NULL)
+		{
+			printf("%x ", *(Byte*)cell->data);
+			cell = cell->next;
+		}
+	}
+	printf("\n");
+}
+
+Binary zero_Binary()
+{
+	Binary zeroBinary;
+	init_Binary(&zeroBinary);
+	
+	return zeroBinary;
+}
+
+Binary un_Binary()
+{
+	Binary unBinary;
+	init_Binary(&unBinary);
+	Byte un = 1;
+	add_List(unBinary->byte, &un);
+	unBinary->size = 1;
+	
+	return unBinary;
+}

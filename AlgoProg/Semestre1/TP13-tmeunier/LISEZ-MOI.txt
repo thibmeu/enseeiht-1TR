@@ -1,0 +1,21 @@
+Auteur : Thibault Meunier
+--------------------------------------------------------------------------------
+
+Fichiers ajoutes:
+ - tests-sda-commun.[hc]: Effectue des tests sur une SDA --> est appele par tests-lca et tests-th
+ - types.c: Initialisation du couple (cle, valeur)
+ - lca-solo.[hc]: Effectue des operations sur une seule cellule : ajout et suppression
+ - performance*: Programme type mesurant les performances d'une LCA
+
+Performances: mesurees via gprof
+Les fichiers de perfomances sont generes automatiquement via la commande
+make performance
+Ceux-ci sont stockes dans le dossier "performance" sous le format suivant:
+performance-type-(specificiteTH)-nbElements
+ - type correspond a lca-iterative, lca-recursive, ou th
+ - specificiteTH precise pour une TH sa taille et sa fonction de hachage
+ - nbElements decrit le nombre d'elements ajoute pour le test
+On remarque que pour un grand nombre d'element, l'utilisation d'une table
+de hachage a forte memoire et un fonctionde hachage appropriee est bien
+plus efficace que l'emploi d'une LCA.
+Pour les LCA, la version iterative est plus efficace que sa consoeur recursive

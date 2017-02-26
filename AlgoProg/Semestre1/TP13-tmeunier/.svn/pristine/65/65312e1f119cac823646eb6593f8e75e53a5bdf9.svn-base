@@ -1,0 +1,19 @@
+/*******************************************************************************
+ *  Auteur   : 
+ *  Objectif : Quelques fonctions de hachages
+ ******************************************************************************/
+
+#ifndef FONCTIONS_HACHAGE__H
+#define FONCTIONS_HACHAGE__H
+#include <string.h>
+// TODO: à faire.
+
+size_t taille(const char* str);
+
+size_t initiale(const char* str);
+
+size_t somme(const char* str);
+
+size_t java(const char* str);
+
+#endif

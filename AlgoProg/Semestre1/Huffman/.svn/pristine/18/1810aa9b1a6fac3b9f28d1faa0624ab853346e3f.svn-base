@@ -1,0 +1,27 @@
+#ifndef COMPRESS_H
+#define COMPRESS_H
+
+#define CHAR_MAX 256
+
+#include "tree.h"
+#include "binary.h"
+#include "couple.h"
+
+void init_freq(Couple* couples);
+
+int frequence(FILE* fichier, Couple* couples); //retourne la taille du fichier decompresse
+
+void tri_Couple(Couple* couples);
+
+int build_Tree(Couple* couples, Tree* tree); //retourne la taille de l'arbre
+
+void description_Tree(Tree tree, Binary* descriptions, Value* caracs, int iCarac); //taille de caracts = taille de l'arbre
+
+void write_forhead(FILE* output, int size_txt, int size_tree, Value* caracs);
+
+void construct_table_caracts(Tree tree, Binary output[CHAR_MAX], Binary tampon_Binary);
+//Necessite tableau output = 256
+
+void compress(FILE* input, FILE* output);
+
+#endif
