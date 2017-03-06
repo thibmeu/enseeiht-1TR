@@ -1,7 +1,0 @@
-Starting audit...
-/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:52: La ligne excède 90 caractères.
-/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:122:36: 'couleur' masque un attribut.
-/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:140:36: 'couleur' masque un attribut.
-/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:147: Line has trailing spaces.
-/home/svn/SVN/cregut.svn.enseeiht.fr/2015/1TR/LO/MP/MP-tmeunier/Polygone.java:148: La première ligne doit se terminer avec un point.
-Audit done.

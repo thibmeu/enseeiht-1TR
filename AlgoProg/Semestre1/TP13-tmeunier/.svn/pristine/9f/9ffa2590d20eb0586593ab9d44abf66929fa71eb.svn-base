@@ -1,6 +1,0 @@
-#include "lca-specifique.h"
-
-void add_LCA_solo(LCA* this, Clef key, Donnee value);
-
-void delete_LCA_solo(LCA* this);
-

@@ -1,9 +1,0 @@
-#define INIT init_SDA(&sda)
-#include "tests-sda.c"
-
-
-int main()
-{
-	run_tests(all_unit_LCA());
-	return 0;
-}

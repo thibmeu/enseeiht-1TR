@@ -1,6 +1,0 @@
-Memory.java:37: error: cannot find symbol
-			leChef.inscrire(new JoueurReel(joueurDescription[0], joueurDescription[1]));
-			                    ^
-  symbol:   class JoueurReel
-  location: class Memory
-1 error

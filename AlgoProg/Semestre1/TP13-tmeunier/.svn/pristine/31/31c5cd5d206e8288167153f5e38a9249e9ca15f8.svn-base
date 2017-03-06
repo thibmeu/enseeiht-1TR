@@ -1,3 +1,0 @@
-#define TESTS_TH__H
-#include "tests-sda.c"
-
