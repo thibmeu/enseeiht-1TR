@@ -1,7 +1,0 @@
-function [ ok ] = possedechaine( G, chaine )
-%POSSEDECHAINE G possede-t-il chaine ?
-%   Detailed explanation goes here
-
-ok = true;
-end
-
